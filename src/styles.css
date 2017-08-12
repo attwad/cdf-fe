@@ -1,0 +1,7 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.material-icons.md-18 { font-size: 18px; }
+
+body {
+  background: #f7f7f7;
+}

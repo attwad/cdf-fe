@@ -1,0 +1,36 @@
+<div>
+  <h4>Transcript Search</h4>
+  <md-input-container style="width:300px; margin:auto">
+    <input #searchBox mdInput
+      placeholder="Search audio transcripts..."
+      id="search-box" (keyup)="search(searchBox.value)" />
+  </md-input-container>
+  <div>
+    <p *ngIf="searchResponse">Search took {{searchResponse?.took_ms}}ms.</p>
+    <p *ngIf="searchResponse?.timed_out">Timed-out</p>
+    <div *ngFor="let source of searchResponse?.sources">
+      <md-card style="margin: 15px 0 15px 0;">
+        <md-card-title>
+          {{source.title}}
+        </md-card-title>
+        <md-card-subtitle>
+          Chaire: {{source.chaire}}<br>
+          <i class="material-icons md-18">person</i> {{source.lecturer}}<br>
+          Function: {{source.function}}<br>
+          Date: {{source.date}}<br>
+          Lesson type: {{source.type}}<br>
+          Lesson subject: {{source.type_title}}<br>
+          Language: {{source.lang}}<br>
+        </md-card-subtitle>
+        <md-card-content>
+          ...{{source.transcript}}...
+        </md-card-content>
+        <md-card-actions style="margin: auto;">
+          <a md-raised-button href="{{source.source_url}}" target="_blank">
+            View on <i>College de France</i> website
+          </a>
+        </md-card-actions>
+      </md-card>
+    </div>
+  </div>
+</div>

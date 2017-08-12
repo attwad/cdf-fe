@@ -1,0 +1,25 @@
+<div style="padding-top: 16px">
+  <md-slide-toggle [checked]="showConvertedOnly" (change)="onShowConvertedOnlyChanged()">
+    Show converted only
+  </md-slide-toggle>
+</div>
+<div *ngFor="let lesson of lessons"
+  class="mdl-cell mdl-cell--4-col mdl-cell--stretch">
+  <md-card style="margin: 15px 0 15px 0;">
+    <md-card-title>
+      {{lesson.title}}
+    </md-card-title>
+    <md-card-subtitle>
+      Chaire: {{lesson.chaire}}
+    </md-card-subtitle>
+    <md-card-content>
+      <i class="material-icons md-18">person</i> {{lesson.lecturer}}<br>
+      Function: {{lesson.function}}<br>
+      Date: {{lesson.date}}<br>
+      Lesson type: {{lesson.lesson_type}}<br>
+      Lesson subject: {{lesson.type_title}}<br>
+      Lesson duration: {{lesson.duration}}
+    </md-card-content>
+  </md-card>
+</div>
+<button *ngIf="cursor" md-raised-button (click)="goToNextPage()">Next page</button>
