@@ -1,0 +1,39 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fe
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fe
+    spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: worker-key
+      containers:
+      - name: fe
+        image: eu.gcr.io/college-de-france/fe:latest
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
+        command: ["go-wrapper"]
+        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80"]
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fe-ingress
+spec:
+  backend:
+    serviceName: fe
+    servicePort: 80

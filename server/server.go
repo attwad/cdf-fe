@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	hostPort  = flag.String("listen_addr", "127.0.0.1:8080", "Address to listen on.")
+	hostPort  = flag.String("listen_addr", "0.0.0.0:80", "Address to listen on.")
 	projectID = flag.String("project_id", "college-de-france", "Google cloud project.")
 )
 
@@ -108,8 +108,9 @@ func main() {
 	}
 	http.HandleFunc("/api/lessons", s.APIServeLessons)
 	http.HandleFunc("/api/search", s.APIServeSearch)
-	fs := http.FileServer(http.Dir("dist"))
-	http.Handle("/", fs)
+	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {})
+	http.Handle("/", http.FileServer(http.Dir("dist")))
+	log.Println("Serving on", *hostPort)
 
 	log.Fatal(http.ListenAndServe(*hostPort, nil))
 }
