@@ -108,7 +108,7 @@ func main() {
 	}
 	http.HandleFunc("/api/lessons", s.APIServeLessons)
 	http.HandleFunc("/api/search", s.APIServeSearch)
-	fs := http.FileServer(http.Dir("../dist"))
+	fs := http.FileServer(http.Dir("dist"))
 	http.Handle("/", fs)
 
 	log.Fatal(http.ListenAndServe(*hostPort, nil))
