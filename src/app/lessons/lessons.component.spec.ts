@@ -2,22 +2,30 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router, ActivatedRoute, ParamMap} from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Observable } from 'rxjs/Observable';
 
 import { LessonsComponent } from './lessons.component';
-import { LessonsService } from '../lessons.service';
+import { LessonsService, LessonsResponse} from '../lessons.service';
 
-class MockLessonsService extends LessonsService {}
+class MockLessonsService {
+  getLessons(showConvertedOnly: boolean, cursor?: string): Observable<LessonsResponse> {
+    return Observable.of<LessonsResponse>();
+  }
+}
 
 describe('LessonsComponent', () => {
   let component: LessonsComponent;
   let fixture: ComponentFixture<LessonsComponent>;
+  let mockLessonsService: MockLessonsService = new MockLessonsService();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ LessonsComponent ],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule.withRoutes(
+        [{path: '', component: LessonsComponent}, {path: 'simple', component: LessonsComponent}]
+      )],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [MockLessonsService]
+      providers: [ {provide: LessonsService, useValue: mockLessonsService } ]
     })
     .compileComponents();
   }));
