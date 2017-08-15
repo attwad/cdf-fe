@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/attwad/cdf-fe/server/db"
+	"github.com/attwad/cdf-fe/server/health"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
 )
@@ -94,6 +95,7 @@ func (s *server) APIServeSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	flag.Parse()
 	ctx := context.Background()
 
 	dbWrapper, err := db.NewDatastoreWrapper(ctx, *projectID)
@@ -108,7 +110,7 @@ func main() {
 	}
 	http.HandleFunc("/api/lessons", s.APIServeLessons)
 	http.HandleFunc("/api/search", s.APIServeSearch)
-	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {})
+	http.Handle("/healthz", health.NewElasticHealthChecker(elasticHostPort))
 	http.Handle("/", http.FileServer(http.Dir("dist")))
 	log.Println("Serving on", *hostPort)
 
