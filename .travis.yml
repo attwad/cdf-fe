@@ -1,0 +1,8 @@
+matrix:
+  include:
+    - language: go
+    - install:
+      - go get cloud.google.com/go/storage
+    - script: go test ./...
+
+    - language: node
