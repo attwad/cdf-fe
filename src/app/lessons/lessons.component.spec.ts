@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { LessonsComponent } from './lessons.component';
 import { LessonsService, LessonsResponse} from '../lessons.service';
+import { ScrollerService } from '../scroller.service';
 
 class MockLessonsService {
   getLessons(showConvertedOnly: boolean, cursor?: string): Observable<LessonsResponse> {
@@ -13,21 +14,29 @@ class MockLessonsService {
   }
 }
 
+class MockScrollerService {
+  public scrolled: boolean = false;
+
+  scrollToTop(): void {
+    this.scrolled = true;
+  }
+}
+
 describe('LessonsComponent', () => {
   let component: LessonsComponent;
   let fixture: ComponentFixture<LessonsComponent>;
   let mockLessonsService: MockLessonsService = new MockLessonsService();
+  let mockScrollerService: MockScrollerService = new MockScrollerService();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ LessonsComponent ],
-      imports: [RouterTestingModule.withRoutes(
-        [{path: '', component: LessonsComponent}, {path: 'simple', component: LessonsComponent}]
-      )],
+      imports: [RouterTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [ {provide: LessonsService, useValue: mockLessonsService } ]
-    })
-    .compileComponents();
+      providers: [
+        { provide: LessonsService, useValue: mockLessonsService},
+        { provide: ScrollerService, useValue: mockScrollerService}]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -3,6 +3,7 @@ import {Router, ActivatedRoute, ParamMap} from '@angular/router';
 
 import {Lesson} from '../lesson';
 import {LessonsService, LessonsResponse} from '../lessons.service';
+import { ScrollerService } from '../scroller.service';
 
 import 'rxjs/add/operator/switchMap';
 
@@ -17,6 +18,7 @@ export class LessonsComponent implements OnInit {
   showConvertedOnly: boolean = false;
 
   constructor(
+    private scrollerService: ScrollerService,
     private route: ActivatedRoute,
     private lessonsService: LessonsService,
     private router: Router) {}
@@ -33,6 +35,7 @@ export class LessonsComponent implements OnInit {
         this.lessons = lessonsResponse.lessons;
         this.cursor = lessonsResponse.cursor;
         console.log('fetched new lessons, cursor=', this.cursor);
+        this.scrollerService.scrollToTop();
       });
   }
 

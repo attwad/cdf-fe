@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { LessonsComponent } from './lessons/lessons.component';
 import { SearchComponent } from './search/search.component';
 import { LessonsService } from './lessons.service';
+import { ScrollerService } from './scroller.service';
 
 import { AppRoutingModule }     from './app.routing.module';
 
@@ -31,7 +32,7 @@ import {MdSlideToggleModule} from '@angular/material';
     MdInputModule,
     MdSlideToggleModule
   ],
-  providers: [LessonsService],
+  providers: [LessonsService, ScrollerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
