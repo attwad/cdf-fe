@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -15,6 +16,8 @@ import {MdCardModule} from '@angular/material';
 import {MdButtonModule} from '@angular/material';
 import {MdInputModule} from '@angular/material';
 import {MdSlideToggleModule} from '@angular/material';
+import {MdProgressBarModule} from '@angular/material';
+
 import { AboutComponent } from './about/about.component';
 
 @NgModule({
@@ -26,13 +29,15 @@ import { AboutComponent } from './about/about.component';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
     MdToolbarModule,
     MdCardModule,
     MdButtonModule,
     MdInputModule,
-    MdSlideToggleModule
+    MdSlideToggleModule,
+    MdProgressBarModule
   ],
   providers: [LessonsService, ScrollerService],
   bootstrap: [AppComponent]

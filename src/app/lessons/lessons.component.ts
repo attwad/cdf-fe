@@ -16,6 +16,7 @@ export class LessonsComponent implements OnInit {
   lessons: Lesson[];
   cursor?: string;
   showConvertedOnly: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private scrollerService: ScrollerService,
@@ -28,12 +29,14 @@ export class LessonsComponent implements OnInit {
       .switchMap((params: ParamMap) => {
         console.log('Params changed', params);
         this.showConvertedOnly = params.get('showConvertedOnly')==='true';
+        this.loading = true;
         return this.lessonsService.getLessons(
           this.showConvertedOnly, params.get('cursor'))
       }).subscribe((lessonsResponse: LessonsResponse) => {
         console.log("Fetched new response: ", lessonsResponse);
         this.lessons = lessonsResponse.lessons;
         this.cursor = lessonsResponse.cursor;
+        this.loading = false;
         console.log('fetched new lessons, cursor=', this.cursor);
         this.scrollerService.scrollToTop();
       });

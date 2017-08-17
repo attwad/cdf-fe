@@ -1,3 +1,4 @@
+<md-progress-bar mode="query" [ngClass]="{'hidden': !loading}"></md-progress-bar>
 <div style="padding-top: 16px">
   <md-slide-toggle [checked]="showConvertedOnly" (change)="onShowConvertedOnlyChanged()">
     Show converted only
@@ -13,11 +14,11 @@
       Chaire: {{lesson.chaire}}
     </md-card-subtitle>
     <md-card-content>
-      <i class="material-icons md-18">person</i> {{lesson.lecturer}}<br>
-      Function: {{lesson.function}}<br>
-      Date: {{lesson.date}}<br>
-      Lesson type: {{lesson.lesson_type}}<br>
-      Lesson subject: {{lesson.type_title}}<br>
+      <i class="material-icons md-18">person</i> {{lesson.lecturer}}
+      <span *ngIf="lesson.function"> - {{lesson.function}}</span>
+      <br>Date: {{lesson.date}}<br>
+      <span *ngIf="lesson.type">Lesson type: {{lesson.lesson_type}}<br></span>
+      <span *ngIf="lesson.subject">Lesson subject: {{lesson.type_title}}<br></span>
       Lesson duration: {{lesson.duration}}
     </md-card-content>
   </md-card>
