@@ -6,8 +6,8 @@
       id="search-box" (keyup)="search(searchBox.value)" />
   </md-input-container>
   <div>
-    <p *ngIf="searchResponse">Search took {{searchResponse?.took_ms}}ms.</p>
     <p *ngIf="searchResponse?.timed_out">Timed-out</p>
+    <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>
     <div *ngFor="let source of searchResponse?.sources">
       <md-card style="margin: 15px 0 15px 0;">
         <md-card-title>
@@ -32,5 +32,6 @@
         </md-card-actions>
       </md-card>
     </div>
+    <i *ngIf="searchResponse">Search took {{searchResponse?.took_ms}}ms.</i>
   </div>
 </div>

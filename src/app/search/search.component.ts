@@ -21,6 +21,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 export class SearchComponent implements OnInit {
   searchResponse?: SearchResponse;
   private searchQueries = new Subject<string>();
+  loading: boolean = false;
 
   constructor(
       private lessonsService: LessonsService,
@@ -28,23 +29,32 @@ export class SearchComponent implements OnInit {
 
   // Push a search term into the observable stream.
   search(query: string): void {
+    if (!query || query.length < 2) {
+      return;
+    }
     this.searchQueries.next(query);
-    console.log(this.searchQueries);
   }
 
   ngOnInit() {
     this.searchQueries
-    .debounceTime(300)         // wait 300ms after each keystroke before considering the term
-    .distinctUntilChanged()    // ignore if next search term is same as previous
-    .switchMap(query => query  // switch to new observable each time the term changes
-      ? this.lessonsService.search(query)
-      : Observable.of<SearchResponse>(null))
+    // wait 300ms after each keystroke before considering the term
+    .debounceTime(300)
+    // ignore if next search term is same as previous
+    .distinctUntilChanged()
+    // switch to new observable each time the term changes
+    .switchMap(query => {
+      this.loading = true;
+      return this.lessonsService.search(query);
+    })
     .catch(error => {
       // TODO: add real error handling
       console.error(error);
       return Observable.of<SearchResponse>(null);
     })
-    .subscribe((response: SearchResponse) => this.searchResponse = response);
+    .subscribe((response: SearchResponse) => {
+      this.loading = false;
+      this.searchResponse = response;
+    });
   }
 
 }
