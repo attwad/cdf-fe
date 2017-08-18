@@ -44,7 +44,7 @@ func (h *elasticHealthCheck) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
-	if hr.Status != "green" {
+	if hr.Status != "green" && hr.Status != "yellow" {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}

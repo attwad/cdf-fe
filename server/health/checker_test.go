@@ -20,9 +20,9 @@ func TestHealthCheck(t *testing.T) {
 		}, {
 			msg:        "status yellow",
 			jsonResp:   `{"status":"yellow"}`,
-			wantStatus: 500,
+			wantStatus: 200,
 		}, {
-			msg:        "status yellow",
+			msg:        "garbage json",
 			jsonResp:   `garbaaaaage`,
 			wantStatus: 500,
 		},
