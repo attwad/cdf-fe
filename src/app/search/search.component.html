@@ -6,7 +6,14 @@
       id="search-box" (keyup)="search(searchBox.value)" />
   </md-input-container>
   <div>
-    <p *ngIf="searchResponse?.timed_out">Timed-out</p>
+    <md-chip-list class="mat-chip-list-stacked">
+      <md-chip *ngIf="error" selected="true" color="warn">
+        {{error}}
+      </md-chip>
+      <md-chip *ngIf="searchResponse?.timed_out" selected="true" color="warn">
+        Timed out
+      </md-chip>
+    </md-chip-list>
     <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>
     <div *ngFor="let source of searchResponse?.sources">
       <md-card style="margin: 15px 0 15px 0;">

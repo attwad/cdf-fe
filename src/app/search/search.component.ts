@@ -22,6 +22,7 @@ export class SearchComponent implements OnInit {
   searchResponse?: SearchResponse;
   private searchQueries = new Subject<string>();
   loading: boolean = false;
+  error?: string;
 
   constructor(
       private lessonsService: LessonsService,
@@ -30,6 +31,9 @@ export class SearchComponent implements OnInit {
   // Push a search term into the observable stream.
   search(query: string): void {
     if (!query || query.length < 2) {
+      this.searchResponse = null;
+      this.error = null;
+      this.loading = false;
       return;
     }
     this.searchQueries.next(query);
@@ -44,14 +48,18 @@ export class SearchComponent implements OnInit {
     // switch to new observable each time the term changes
     .switchMap(query => {
       this.loading = true;
+      // TODO: Why no more queries are issued after an error occurs?
       return this.lessonsService.search(query);
     })
     .catch(error => {
-      // TODO: add real error handling
       console.error(error);
+      this.error = error.message;
       return Observable.of<SearchResponse>(null);
     })
     .subscribe((response: SearchResponse) => {
+      if (response) {
+        this.error = null;
+      }
       this.loading = false;
       this.searchResponse = response;
     });
