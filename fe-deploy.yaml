@@ -12,6 +12,7 @@ spec:
       volumes:
       - name: google-cloud-key
         secret:
+          # TODO: Get own key for datastore readonly access.
           secretName: worker-key
       containers:
       - name: fe
