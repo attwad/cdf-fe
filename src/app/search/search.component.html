@@ -6,14 +6,6 @@
       id="search-box" (keyup)="search(searchBox.value)" />
   </md-input-container>
   <div>
-    <md-chip-list class="mat-chip-list-stacked">
-      <md-chip *ngIf="error" selected="true" color="warn">
-        {{error}}
-      </md-chip>
-      <md-chip *ngIf="searchResponse?.timed_out" selected="true" color="warn">
-        Timed out
-      </md-chip>
-    </md-chip-list>
     <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>
     <div *ngFor="let source of searchResponse?.sources">
       <md-card style="margin: 15px 0 15px 0;">
@@ -39,6 +31,16 @@
         </md-card-actions>
       </md-card>
     </div>
-    <i *ngIf="searchResponse">Search took {{searchResponse?.took_ms}}ms.</i>
+    <md-chip-list class="mat-chip-list-stacked">
+      <md-chip *ngIf="searchResponse" style="max-width:150px">
+        Search took {{searchResponse?.took_ms}}ms.
+      </md-chip>
+      <md-chip *ngIf="error" selected="true" color="warn">
+        {{error}}
+      </md-chip>
+      <md-chip *ngIf="searchResponse?.timed_out" selected="true" color="warn">
+        Timed out
+      </md-chip>
+    </md-chip-list>
   </div>
 </div>
