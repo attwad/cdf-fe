@@ -23,6 +23,10 @@
         </md-card-subtitle>
         <md-card-content>
           ...{{source.transcript}}...
+          <br>
+          <span mdTooltipPosition="right" mdTooltip="This is an excerpt from an automated transcription, it most likely contains errors and/or inconsistencies with what the lecturer actually said.">
+            <i style="margin-top:10px;" class="material-icons">help_outline</i>
+          </span>
         </md-card-content>
         <md-card-actions style="margin: auto;">
           <a md-raised-button href="{{source.source_url}}" target="_blank">

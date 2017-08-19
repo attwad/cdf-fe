@@ -19,6 +19,7 @@ import {MdSlideToggleModule} from '@angular/material';
 import {MdProgressBarModule} from '@angular/material';
 import {MdProgressSpinnerModule} from '@angular/material';
 import {MdChipsModule} from '@angular/material';
+import {MdTooltipModule} from '@angular/material';
 
 import { AboutComponent } from './about/about.component';
 
@@ -41,7 +42,8 @@ import { AboutComponent } from './about/about.component';
     MdSlideToggleModule,
     MdProgressBarModule,
     MdProgressSpinnerModule,
-    MdChipsModule
+    MdChipsModule,
+    MdTooltipModule
   ],
   providers: [LessonsService, ScrollerService],
   bootstrap: [AppComponent]
