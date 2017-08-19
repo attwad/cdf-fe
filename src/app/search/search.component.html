@@ -1,10 +1,32 @@
 <div>
-  <h4>Transcript Search</h4>
-  <md-input-container style="width:300px; margin:auto">
-    <input #searchBox mdInput
-      placeholder="Search audio transcripts..."
-      id="search-box" (keyup)="search(searchBox.value)" />
-  </md-input-container>
+  <md-card>
+    <md-card-title>
+      Search audio transcripts
+    </md-card-title>
+    <md-card-subtitle>
+      <pre>
+    + signifies AND operation
+    | signifies OR operation
+    - negates a single token
+    " wraps a number of tokens to signify a phrase for searching
+    * at the end of a term signifies a prefix query
+    ( and ) signify precedence
+    ~N after a word signifies edit distance (fuzziness)
+    ~N after a phrase signifies slop amount
+      </pre>
+      Example queries:
+      <ul>
+        <li>+China -opium</li>
+      </ul>
+    </md-card-subtitle>
+    <md-card-content>
+      <md-input-container style="width:100%">
+        <input #searchBox mdInput
+          placeholder="Enter your query..."
+          id="search-box" (keyup)="search(searchBox.value)" />
+      </md-input-container>
+    </md-card-content>
+  </md-card>
   <div>
     <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>
     <div *ngFor="let source of searchResponse?.sources">
@@ -22,7 +44,7 @@
           <span *ngIf="source.lang">Language: {{source.lang}}<br></span>
         </md-card-subtitle>
         <md-card-content>
-          ...{{source.transcript}}...
+          <q>...{{source.transcript}}...</q>
           <br>
           <span mdTooltipPosition="right" mdTooltip="This is an excerpt from an automated transcription, it most likely contains errors and/or inconsistencies with what the lecturer actually said.">
             <i style="margin-top:10px;" class="material-icons">help_outline</i>
