@@ -61,10 +61,9 @@ func (e *elasticSearcher) Search(q string) (*Response, error) {
 	}
 	u.Path = "_search"
 	type simpleQueryString struct {
-		Query           string   `json:"query"`
-		Analyzer        string   `json:"analyzer"`
-		Fields          []string `json:"fields"`
-		DefaultOperator string   `json:"default_operator"`
+		Query     string `json:"query"`
+		Analyzer  string `json:"analyzer"`
+		AllFields bool   `json:"all_fields"`
 	}
 	type searchQuery struct {
 		SimpleQueryString simpleQueryString `json:"simple_query_string"`
@@ -75,10 +74,9 @@ func (e *elasticSearcher) Search(q string) (*Response, error) {
 	body := &searchRequest{
 		Query: searchQuery{
 			SimpleQueryString: simpleQueryString{
-				Query:           q,
-				Analyzer:        "french",
-				Fields:          []string{"transcript"},
-				DefaultOperator: "and",
+				Query:     q,
+				Analyzer:  "french",
+				AllFields: true,
 			},
 		},
 	}
