@@ -29,8 +29,10 @@
   </md-card>
   <div>
     <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>
-    <div *ngFor="let source of searchResponse?.sources">
-      <md-card style="margin: 15px 0 15px 0;">
+    <div class="flex-container">
+      <md-card
+        *ngFor="let source of searchResponse?.sources"
+        class="flex-card">
         <md-card-title>
           {{source.title}}
         </md-card-title>
