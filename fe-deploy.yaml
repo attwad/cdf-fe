@@ -16,7 +16,7 @@ spec:
           secretName: worker-key
       containers:
       - name: fe
-        image: eu.gcr.io/college-de-france/fe:latest
+        image: eu.gcr.io/college-de-france/fe:prod
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
