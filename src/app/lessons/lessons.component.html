@@ -4,9 +4,10 @@
     Show converted only
   </md-slide-toggle>
 </div>
-<div *ngFor="let lesson of lessons"
-  class="mdl-cell mdl-cell--4-col mdl-cell--stretch">
-  <md-card style="margin: 15px 0 15px 0;">
+<div class="flex-container">
+  <md-card
+    *ngFor="let lesson of lessons"
+    class="flex-card">
     <md-card-title>
       {{lesson.title}}
     </md-card-title>
