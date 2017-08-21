@@ -2,6 +2,7 @@ package health
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -41,10 +42,12 @@ func (h *elasticHealthCheck) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	var hr healthResponse
 	if err := json.NewDecoder(resp.Body).Decode(&hr); err != nil {
+		log.Println("Elasticsearch is unhealthy:", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	if hr.Status != "green" && hr.Status != "yellow" {
+		log.Printf("Elasticsearch is unhealthy:\n%+v\n", hr)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
