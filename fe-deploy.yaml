@@ -12,8 +12,7 @@ spec:
       volumes:
       - name: google-cloud-key
         secret:
-          # TODO: Get own key for datastore readonly access.
-          secretName: worker-key
+          secretName: frontend-key
       containers:
       - name: fe
         image: eu.gcr.io/college-de-france/fe:prod
