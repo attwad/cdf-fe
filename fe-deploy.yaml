@@ -20,10 +20,12 @@ spec:
         - name: google-cloud-key
           mountPath: /var/secrets/google
         env:
+        - name: GET_HOSTS_FROM
+          value: dns
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/secrets/google/key.json
         command: ["go-wrapper"]
-        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80"]
+        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80", "--elastic_address=http://elastic:9200"]
         ports:
         - containerPort: 80
           name: http

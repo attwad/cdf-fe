@@ -8,4 +8,4 @@ RUN go-wrapper download
 RUN go-wrapper install
 
 # Provide a sensible default run command.
-CMD ["go-wrapper", "run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80"]
+CMD ["go-wrapper", "run", "--project_id=college-de-france", "--listen_addr=127.0.0.1:80", "--elastic_address=http://127.0.0.1:9200"]

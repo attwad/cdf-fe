@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/attwad/cdf-fe/server/db"
@@ -17,8 +16,9 @@ import (
 )
 
 var (
-	hostPort  = flag.String("listen_addr", "127.0.0.1:8080", "Address to listen on.")
-	projectID = flag.String("project_id", "college-de-france", "Google cloud project.")
+	hostPort       = flag.String("listen_addr", "127.0.0.1:8080", "Address to listen on.")
+	projectID      = flag.String("project_id", "college-de-france", "Google cloud project.")
+	elasticAddress = flag.String("elastic_address", "", "HTTP address to elastic instance")
 )
 
 type server struct {
@@ -103,15 +103,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("creating db wrapper: %v", err)
 	}
-	elasticHostPort := "http://" + os.Getenv("ELASTICSEARCH_SERVICE_HOST") + ":" + os.Getenv("ELASTICSEARCH_SERVICE_PORT")
+	log.Println("Will connect to elastic instance @", *elasticAddress)
 	s := &server{
 		ctx:      ctx,
 		db:       dbWrapper,
-		searcher: search.NewElasticSearcher(elasticHostPort),
+		searcher: search.NewElasticSearcher(*elasticAddress),
 	}
 	http.HandleFunc("/api/lessons", s.APIServeLessons)
 	http.HandleFunc("/api/search", s.APIServeSearch)
-	http.Handle("/healthz", health.NewElasticHealthChecker(elasticHostPort))
+	http.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress))
 	http.Handle("/", http.FileServer(http.Dir("dist")))
 	log.Println("Serving on", *hostPort)
 
