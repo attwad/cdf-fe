@@ -8,11 +8,13 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/attwad/cdf-fe/server/db"
 	"github.com/attwad/cdf-fe/server/health"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -109,11 +111,25 @@ func main() {
 		db:       dbWrapper,
 		searcher: search.NewElasticSearcher(*elasticAddress),
 	}
-	http.HandleFunc("/api/lessons", s.APIServeLessons)
-	http.HandleFunc("/api/search", s.APIServeSearch)
-	http.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress))
-	http.Handle("/", http.FileServer(http.Dir("dist")))
-	log.Println("Serving on", *hostPort)
+	r := mux.NewRouter()
+	r.HandleFunc("/api/lessons", s.APIServeLessons).Methods("GET")
+	r.HandleFunc("/api/search", s.APIServeSearch).Methods("GET")
+	r.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress)).Methods("GET")
+	appHandler := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "dist/index.html")
+	}
+	for _, route := range []string{"/search", "/lesson{*}", "/about"} {
+		r.HandleFunc(route, appHandler).Methods("GET")
+	}
+	r.Handle("/{[a-z0-9.]+.(js|html|css)}", http.FileServer(http.Dir("dist"))).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(*hostPort, nil))
+	log.Println("Serving on", *hostPort)
+	srv := &http.Server{
+		Handler: r,
+		Addr:    *hostPort,
+		// Good practice: enforce timeouts.
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	log.Fatal(srv.ListenAndServe())
 }
