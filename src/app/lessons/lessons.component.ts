@@ -34,8 +34,12 @@ export class LessonsComponent implements OnInit {
           this.showConvertedOnly, params.get('cursor'))
       }).subscribe((lessonsResponse: LessonsResponse) => {
         console.log("Fetched new response: ", lessonsResponse);
-        this.lessons = lessonsResponse.lessons;
-        this.cursor = lessonsResponse.cursor;
+        if (lessonsResponse.lessons.length == 0) {
+          this.cursor = undefined;
+        } else {
+          this.lessons = lessonsResponse.lessons;
+          this.cursor = lessonsResponse.cursor;
+        }
         this.loading = false;
         console.log('fetched new lessons, cursor=', this.cursor);
         this.scrollerService.scrollToTop();
