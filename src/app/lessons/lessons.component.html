@@ -1,5 +1,5 @@
-<md-progress-bar mode="query" [ngClass]="{'hidden': !loading}"></md-progress-bar>
-<div style="padding-top: 16px">
+<md-progress-bar style="height:4px" mode="query" [ngClass]="{'hidden': !loading}"></md-progress-bar>
+<div [ngStyle]="{'padding-top': loading ? '16px' : '20px'}">
   <md-slide-toggle [checked]="showConvertedOnly" (change)="onShowConvertedOnlyChanged()">
     Show converted only
   </md-slide-toggle>
