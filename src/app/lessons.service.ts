@@ -13,10 +13,10 @@ export interface LessonsResponse {
 export interface Source {
   title: string;
 	lecturer: string;
-	chaire:     string
-	type?:       string;
+	chaire: string
+	type?: string;
 	type_title?: string;
-	lang?:   string;
+	lang?: string;
 	source_url: string;
 	transcript: string;
 }
