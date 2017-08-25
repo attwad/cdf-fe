@@ -118,7 +118,7 @@ func main() {
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")
 	}
-	for _, route := range []string{"/search", "/lesson{*}", "/about"} {
+	for _, route := range []string{"/search", "/lesson{*}", "/about", "/"} {
 		r.HandleFunc(route, appHandler).Methods("GET")
 	}
 	r.Handle("/{[a-z0-9.]+.(js|html|css)}", http.FileServer(http.Dir("dist"))).Methods("GET")
