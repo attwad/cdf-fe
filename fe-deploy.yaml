@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: fe
 spec:
+  strategy:
+    type: Recreate
   replicas: 1
   template:
     metadata:
@@ -15,7 +17,7 @@ spec:
           secretName: frontend-key
       containers:
       - name: fe
-        image: eu.gcr.io/college-de-france/fe
+        image: eu.gcr.io/college-de-france/fe:latest
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
