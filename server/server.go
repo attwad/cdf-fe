@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/attwad/cdf-fe/server/db"
+	"github.com/attwad/cdf-fe/server/gzip"
 	"github.com/attwad/cdf-fe/server/health"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
@@ -121,7 +122,9 @@ func main() {
 	for _, route := range []string{"/search", "/lesson{*}", "/about", "/"} {
 		r.HandleFunc(route, appHandler).Methods("GET")
 	}
-	r.Handle("/{[a-z0-9.]+.(js|html|css)}", http.FileServer(http.Dir("dist"))).Methods("GET")
+	r.Handle(
+		"/{[a-z0-9.]+.(js|html|css)}",
+		gzip.NewGZipHTTPHandler(http.FileServer(http.Dir("dist")))).Methods("GET")
 
 	log.Println("Serving on", *hostPort)
 	srv := &http.Server{
