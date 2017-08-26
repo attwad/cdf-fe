@@ -21,7 +21,7 @@ class RouterStub {
 describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
-  let mockLessonsService: MockLessonsService = new MockLessonsService();
+  const mockLessonsService: MockLessonsService = new MockLessonsService();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

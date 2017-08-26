@@ -8,7 +8,7 @@ import { ScrollerService } from '../scroller.service';
 import 'rxjs/add/operator/switchMap';
 
 @Component({
-  selector: 'lessons',
+  selector: 'app-lessons',
   templateUrl: './lessons.component.html',
   styleUrls: ['./lessons.component.css']
 })
@@ -28,13 +28,13 @@ export class LessonsComponent implements OnInit {
     this.route.paramMap
       .switchMap((params: ParamMap) => {
         console.log('Params changed', params);
-        this.showConvertedOnly = params.get('showConvertedOnly')==='true';
+        this.showConvertedOnly = params.get('showConvertedOnly') === 'true';
         this.loading = true;
         return this.lessonsService.getLessons(
-          this.showConvertedOnly, params.get('cursor'))
+          this.showConvertedOnly, params.get('cursor'));
       }).subscribe((lessonsResponse: LessonsResponse) => {
-        console.log("Fetched new response: ", lessonsResponse);
-        if (lessonsResponse.lessons.length == 0) {
+        console.log('Fetched new response: ', lessonsResponse);
+        if (lessonsResponse.lessons.length === 0) {
           this.cursor = undefined;
         } else {
           this.lessons = lessonsResponse.lessons;
@@ -53,7 +53,7 @@ export class LessonsComponent implements OnInit {
       }]);
   }
 
-  goToNextPage():void {
+  goToNextPage(): void {
     this.router.navigate(
       ['/lessons', {
         showConvertedOnly: this.showConvertedOnly,

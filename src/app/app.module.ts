@@ -9,7 +9,7 @@ import { SearchComponent } from './search/search.component';
 import { LessonsService } from './lessons.service';
 import { ScrollerService } from './scroller.service';
 
-import { AppRoutingModule }     from './app.routing.module';
+import { AppRoutingModule } from './app.routing.module';
 
 import {MdToolbarModule} from '@angular/material';
 import {MdCardModule} from '@angular/material';
@@ -19,7 +19,6 @@ import {MdSlideToggleModule} from '@angular/material';
 import {MdProgressBarModule} from '@angular/material';
 import {MdProgressSpinnerModule} from '@angular/material';
 import {MdChipsModule} from '@angular/material';
-import {MdTooltipModule} from '@angular/material';
 
 import { AboutComponent } from './about/about.component';
 
@@ -42,8 +41,7 @@ import { AboutComponent } from './about/about.component';
     MdSlideToggleModule,
     MdProgressBarModule,
     MdProgressSpinnerModule,
-    MdChipsModule,
-    MdTooltipModule
+    MdChipsModule
   ],
   providers: [LessonsService, ScrollerService],
   bootstrap: [AppComponent]

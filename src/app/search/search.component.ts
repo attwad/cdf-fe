@@ -21,7 +21,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 export class SearchComponent implements OnInit {
   searchResponse?: SearchResponse;
   private searchQueries = new Subject<string>();
-  loading: boolean = false;
+  loading = false;
   error?: string;
 
   constructor(

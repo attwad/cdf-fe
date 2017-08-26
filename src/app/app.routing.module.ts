@@ -1,9 +1,9 @@
-import { NgModule }             from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { LessonsComponent }   from './lessons/lessons.component';
-import { SearchComponent }   from './search/search.component';
-import { AboutComponent }   from './about/about.component';
+import { LessonsComponent } from './lessons/lessons.component';
+import { SearchComponent } from './search/search.component';
+import { AboutComponent } from './about/about.component';
 
 const routes: Routes = [
   { path: 'lessons', component: LessonsComponent },

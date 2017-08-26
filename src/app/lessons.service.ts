@@ -37,7 +37,7 @@ export class LessonsService {
       '/api/lessons', {
         params: new HttpParams()
             .set('cursor', cursor || '')
-            .set('filter', showConvertedOnly ? 'converted': '')
+            .set('filter', showConvertedOnly ? 'converted' : '')
       });
   }
 

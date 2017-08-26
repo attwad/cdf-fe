@@ -15,7 +15,7 @@ class MockLessonsService {
 }
 
 class MockScrollerService {
-  public scrolled: boolean = false;
+  public scrolled = false;
 
   scrollToTop(): void {
     this.scrolled = true;
@@ -25,8 +25,8 @@ class MockScrollerService {
 describe('LessonsComponent', () => {
   let component: LessonsComponent;
   let fixture: ComponentFixture<LessonsComponent>;
-  let mockLessonsService: MockLessonsService = new MockLessonsService();
-  let mockScrollerService: MockScrollerService = new MockScrollerService();
+  const mockLessonsService: MockLessonsService = new MockLessonsService();
+  const mockScrollerService: MockScrollerService = new MockScrollerService();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
