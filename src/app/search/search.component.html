@@ -31,6 +31,9 @@
   <div>
     <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>
     <div class="flex-container">
+      <md-chip *ngIf="searchResponse?.sources.length > 0" class="flex-chip">
+        Transcripts excerpts were generated automatically, they most likely contains errors and/or inconsistencies with what the lecturer actually said, read with caution.
+      </md-chip>
       <md-card
         *ngFor="let source of searchResponse?.sources"
         class="flex-card">
@@ -47,12 +50,8 @@
         </md-card-subtitle>
         <md-card-content>
           <q>...{{source.transcript}}...</q>
-          <br>
-          <span mdTooltipPosition="right" mdTooltip="This is an excerpt from an automated transcription, it most likely contains errors and/or inconsistencies with what the lecturer actually said.">
-            <i style="margin-top:10px;" class="material-icons">help_outline</i>
-          </span>
         </md-card-content>
-        <md-card-actions style="margin: auto;">
+        <md-card-actions>
           <a md-raised-button href="{{source.source_url}}" target="_blank">
             View on <i>College de France</i> website
           </a>

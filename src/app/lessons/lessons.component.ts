@@ -15,8 +15,8 @@ import 'rxjs/add/operator/switchMap';
 export class LessonsComponent implements OnInit {
   lessons: Lesson[];
   cursor?: string;
-  showConvertedOnly: boolean = false;
-  loading: boolean = false;
+  showConvertedOnly = false;
+  loading = false;
 
   constructor(
     private scrollerService: ScrollerService,

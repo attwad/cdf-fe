@@ -42,4 +42,4 @@ yarn-error.log
 Thumbs.db
 
 # keys
-/*.json
+/college*.json
