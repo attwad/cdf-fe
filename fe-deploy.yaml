@@ -11,6 +11,13 @@ spec:
       labels:
         app: fe
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: DoesNotExist
       volumes:
       - name: google-cloud-key
         secret:
@@ -39,7 +46,84 @@ metadata:
   name: fe-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: fe-static-ip
+    # Enable kube-lego automatic renewal of ssl certs via let's encrypt.
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "gce"
 spec:
-  backend:
-    serviceName: fe
-    servicePort: 80
+  tls:
+  - hosts:
+    - college-audio.science
+    secretName: fe-tls
+  rules:
+  - host: college-audio.science
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: fe
+          servicePort: 80
+---
+apiVersion: v1
+metadata:
+  name: kube-lego
+data:
+  # modify this to specify your address
+  lego.email: "timothe.faudot+kube-lego@gmail.com"
+  # configre letsencrypt's production api
+  lego.url: "https://acme-v01.api.letsencrypt.org/directory"
+  # This is the staging api.
+  #lego.url: "https://acme-staging.api.letsencrypt.org/directory"
+kind: ConfigMap
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-lego
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # Required for the auto-create kube-lego-nginx service to work.
+        app: kube-lego
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: Exists
+      containers:
+      - name: kube-lego
+        image: jetstack/kube-lego:0.1.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: LEGO_LOG_LEVEL
+          value: info
+        - name: LEGO_SUPPORTED_INGRESS_CLASS
+          value: gce
+        - name: LEGO_SUPPORTED_INGRESS_PROVIDER
+          value: gce
+        - name: LEGO_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: kube-lego
+              key: lego.email
+        - name: LEGO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: kube-lego
+              key: lego.url
+        - name: LEGO_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
