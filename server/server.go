@@ -13,6 +13,7 @@ import (
 	"github.com/attwad/cdf-fe/server/db"
 	"github.com/attwad/cdf-fe/server/gzip"
 	"github.com/attwad/cdf-fe/server/health"
+	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
 	"github.com/gorilla/mux"
@@ -22,6 +23,7 @@ var (
 	hostPort       = flag.String("listen_addr", "127.0.0.1:8080", "Address to listen on.")
 	projectID      = flag.String("project_id", "college-de-france", "Google cloud project.")
 	elasticAddress = flag.String("elastic_address", "", "HTTP address to elastic instance")
+	enableHSTS     = flag.Bool("enable_hsts", true, "Enable HSTS header in HTTP responses")
 )
 
 type server struct {
@@ -97,6 +99,14 @@ func (s *server) APIServeSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func newSecureGzipHandler(h http.Handler) http.Handler {
+	newHandler := gzip.NewGZipHTTPHandler(h)
+	if *enableHSTS {
+		newHandler = hsts.NewHandler(newHandler)
+	}
+	return newHandler
+}
+
 func main() {
 	flag.Parse()
 	ctx := context.Background()
@@ -120,11 +130,11 @@ func main() {
 		http.ServeFile(w, r, "dist/index.html")
 	}
 	for _, route := range []string{"/search", "/lesson{*}", "/about", "/"} {
-		r.HandleFunc(route, appHandler).Methods("GET")
+		r.Handle(route, newSecureGzipHandler(http.HandlerFunc(appHandler))).Methods("GET")
 	}
 	r.Handle(
 		"/{[a-z0-9.]+.(js|html|css)}",
-		gzip.NewGZipHTTPHandler(http.FileServer(http.Dir("dist")))).Methods("GET")
+		newSecureGzipHandler(http.FileServer(http.Dir("dist")))).Methods("GET")
 
 	log.Println("Serving on", *hostPort)
 	srv := &http.Server{
