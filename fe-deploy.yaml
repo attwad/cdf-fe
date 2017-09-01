@@ -24,7 +24,7 @@ spec:
           secretName: frontend-key
       containers:
       - name: fe
-        image: eu.gcr.io/college-de-france/fe:prod-v1.0.3
+        image: eu.gcr.io/college-de-france/fe:prod-v1.1.0
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
@@ -34,7 +34,7 @@ spec:
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/secrets/google/key.json
         command: ["go-wrapper"]
-        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80", "--elastic_address=http://elasticsearch:9200"]
+        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80", "--elastic_address=http://elasticsearch:9200", "--enable_hsts"]
         ports:
         - containerPort: 80
           name: http
