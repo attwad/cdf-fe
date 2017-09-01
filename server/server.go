@@ -12,10 +12,10 @@ import (
 
 	"github.com/attwad/cdf-fe/server/db"
 	"github.com/attwad/cdf-fe/server/gzip"
-	"github.com/attwad/cdf-fe/server/health"
 	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
+	"github.com/attwad/cdf/health"
 	"github.com/gorilla/mux"
 )
 
