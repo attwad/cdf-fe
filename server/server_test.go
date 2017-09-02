@@ -7,16 +7,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/attwad/cdf-fe/server/db"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
+	"github.com/attwad/cdf/db"
 )
 
 type fakeDB struct {
 	filter db.Filter
 }
 
-func (d *fakeDB) GetLessons(ctx context.Context, cursor string, filter db.Filter) ([]data.Entry, string, error) {
+func (d *fakeDB) GetLessons(ctx context.Context, cursor string, filter db.Filter, pageSize int) ([]data.Entry, string, error) {
 	d.filter = filter
 	return []data.Entry{data.Entry{}}, "next cursor", nil
 }

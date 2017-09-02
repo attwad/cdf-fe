@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/attwad/cdf-fe/server/db"
 	"github.com/attwad/cdf-fe/server/gzip"
 	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
+	"github.com/attwad/cdf/db"
 	"github.com/attwad/cdf/health"
 	"github.com/gorilla/mux"
 )
@@ -24,6 +24,10 @@ var (
 	projectID      = flag.String("project_id", "college-de-france", "Google cloud project.")
 	elasticAddress = flag.String("elastic_address", "", "HTTP address to elastic instance")
 	enableHSTS     = flag.Bool("enable_hsts", true, "Enable HSTS header in HTTP responses")
+)
+
+const (
+	pageSize = 10
 )
 
 type server struct {
@@ -37,7 +41,7 @@ func (s *server) APIServeLessons(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("filter") == "converted" {
 		filter = db.FilterOnlyConverted
 	}
-	lessons, cursor, err := s.db.GetLessons(s.ctx, r.URL.Query().Get("cursor"), filter)
+	lessons, cursor, err := s.db.GetLessons(s.ctx, r.URL.Query().Get("cursor"), filter, pageSize)
 	if err != nil {
 		log.Println("Could not read lessons from db:", err)
 		http.Error(w, "Could not read lessons from DB", http.StatusInternalServerError)
