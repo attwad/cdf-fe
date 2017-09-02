@@ -1,0 +1,10 @@
+<md-card *ngIf="stats">
+  <md-card-title>
+    Conversion stats
+  </md-card-title>
+  <md-card-content>
+    So far, {{stats.NumConverted}}/{{stats.NumTotal}} lessons are transcribed.<br>
+    That's {{stats.ConvertedDurationSec / 60 | number:'1.0-0'}} minutes out of {{ stats.LeftDurationSec / 60 | number:'1.0-0'}}
+    <span id="percent">({{stats.ConvertedDurationSec * 100 / (stats.LeftDurationSec + stats.ConvertedDurationSec) | number:'1.0-3'}}%)</span>
+  </md-card-content>
+</md-card>

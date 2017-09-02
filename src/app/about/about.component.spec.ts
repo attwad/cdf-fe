@@ -1,6 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { Component }  from '@angular/core';
 
 import { AboutComponent } from './about.component';
+
+@Component({
+  selector: 'app-stats',
+  template: `Fake stats`
+})
+class FakeStatsComponent { }
 
 describe('AboutComponent', () => {
   let component: AboutComponent;
@@ -8,7 +16,7 @@ describe('AboutComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AboutComponent ]
+      declarations: [ AboutComponent, FakeStatsComponent ]
     })
     .compileComponents();
   }));

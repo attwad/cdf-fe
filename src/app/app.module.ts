@@ -8,6 +8,7 @@ import { LessonsComponent } from './lessons/lessons.component';
 import { SearchComponent } from './search/search.component';
 import { LessonsService } from './lessons.service';
 import { ScrollerService } from './scroller.service';
+import { StatsService } from './stats.service';
 
 import { AppRoutingModule } from './app.routing.module';
 
@@ -21,13 +22,15 @@ import {MdProgressSpinnerModule} from '@angular/material';
 import {MdChipsModule} from '@angular/material';
 
 import { AboutComponent } from './about/about.component';
+import { StatsComponent } from './stats/stats.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LessonsComponent,
     SearchComponent,
-    AboutComponent
+    AboutComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +46,7 @@ import { AboutComponent } from './about/about.component';
     MdProgressSpinnerModule,
     MdChipsModule
   ],
-  providers: [LessonsService, ScrollerService],
+  providers: [LessonsService, ScrollerService, StatsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
