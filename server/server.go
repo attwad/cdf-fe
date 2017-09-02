@@ -16,6 +16,7 @@ import (
 	"github.com/attwad/cdf/data"
 	"github.com/attwad/cdf/db"
 	"github.com/attwad/cdf/health"
+	"github.com/attwad/cdf/stats/io"
 	"github.com/gorilla/mux"
 )
 
@@ -31,9 +32,10 @@ const (
 )
 
 type server struct {
-	ctx      context.Context
-	db       db.Wrapper
-	searcher search.Searcher
+	ctx         context.Context
+	db          db.Wrapper
+	searcher    search.Searcher
+	statsReader io.Reader
 }
 
 func (s *server) APIServeLessons(w http.ResponseWriter, r *http.Request) {
@@ -103,6 +105,21 @@ func (s *server) APIServeSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) APIServeStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := s.statsReader.Read(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(stats); err != nil {
+		log.Println("Could not write json output:", err)
+		http.Error(w, "Could not write json", http.StatusInternalServerError)
+		return
+	}
+}
+
 func newSecureGzipHandler(h http.Handler) http.Handler {
 	newHandler := gzip.NewGZipHTTPHandler(h)
 	if *enableHSTS {
@@ -121,14 +138,20 @@ func main() {
 		log.Fatalf("creating db wrapper: %v", err)
 	}
 	log.Println("Will connect to elastic instance @", *elasticAddress)
+	sr, err := io.NewDatastoreReader(ctx, *projectID)
+	if err != nil {
+		log.Fatal(err)
+	}
 	s := &server{
-		ctx:      ctx,
-		db:       dbWrapper,
-		searcher: search.NewElasticSearcher(*elasticAddress),
+		ctx:         ctx,
+		db:          dbWrapper,
+		searcher:    search.NewElasticSearcher(*elasticAddress),
+		statsReader: sr,
 	}
 	r := mux.NewRouter()
 	r.HandleFunc("/api/lessons", s.APIServeLessons).Methods("GET")
 	r.HandleFunc("/api/search", s.APIServeSearch).Methods("GET")
+	r.HandleFunc("/api/stats", s.APIServeStats).Methods("GET")
 	r.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress)).Methods("GET")
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")
