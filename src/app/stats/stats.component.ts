@@ -8,7 +8,7 @@ import { StatsService, Stats } from '../stats.service';
   styleUrls: ['./stats.component.css']
 })
 export class StatsComponent implements OnInit {
-  private stats: Stats;
+  stats: Stats;
 
   constructor(private statsService: StatsService) { }
 
