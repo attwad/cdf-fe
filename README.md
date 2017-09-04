@@ -1,4 +1,7 @@
-# CdfFe
+# College de France audio transcriptions frontend
+
+[![Build Status](https://travis-ci.org/attwad/cdf-fe.svg?branch=master)](https://travis-ci.org/attwad/cdf-fe)
+[![GoDoc](https://godoc.org/github.com/attwad/cdf-fe?status.png)](https://godoc.org/github.com/attwad/cdf-fe)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.7.
 
