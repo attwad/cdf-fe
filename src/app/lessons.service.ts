@@ -24,6 +24,7 @@ export interface Source {
 export interface SearchResponse {
   took_ms: number;
   timed_out: boolean;
+  total: number;
   sources: Source[];
 }
 

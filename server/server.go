@@ -98,12 +98,14 @@ func (s *server) APIServeSearch(w http.ResponseWriter, r *http.Request) {
 		Query    string          `json:"query"`
 		TookMs   int             `json:"took_ms"`
 		TimedOut bool            `json:"timed_out"`
+		Total    int             `json:"total"`
 		Sources  []search.Source `json:"sources"`
 	}
 	sr := searchResponse{
 		Query:    q,
 		TookMs:   jsr.TookMs,
 		TimedOut: jsr.TimedOut,
+		Total:    jsr.Hits.Total,
 		Sources:  make([]search.Source, 0),
 	}
 	for _, hit := range jsr.Hits.Hits {

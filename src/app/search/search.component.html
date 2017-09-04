@@ -63,6 +63,9 @@
         No results found.
       </md-chip>
       <md-chip *ngIf="searchResponse" style="max-width:150px">
+        Total hits: {{searchResponse?.total}}.
+      </md-chip>
+      <md-chip *ngIf="searchResponse" style="max-width:150px">
         Search took {{searchResponse?.took_ms}}ms.
       </md-chip>
       <md-chip *ngIf="error" selected="true" color="warn">
