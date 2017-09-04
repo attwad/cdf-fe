@@ -22,7 +22,7 @@
     </md-card-subtitle>
     <md-card-content>
       <md-input-container style="width:100%; max-width:350px">
-        <input #searchBox mdInput
+        <input #searchBox mdInput autofocus
           placeholder="Enter your query..."
           id="search-box" (keyup)="search(searchBox.value)" />
       </md-input-container>
@@ -33,6 +33,9 @@
     <div class="flex-container">
       <md-chip *ngIf="searchResponse?.sources.length > 0" class="flex-chip">
         Transcripts excerpts were generated automatically, they most likely contains errors and/or inconsistencies with what the lecturer actually said, read with caution.
+      </md-chip>
+      <md-chip *ngIf="searchResponse" class="flex-chip">
+        Total hits: {{searchResponse?.total}}
       </md-chip>
       <md-card
         *ngFor="let source of searchResponse?.sources"
@@ -58,12 +61,16 @@
         </md-card-actions>
       </md-card>
     </div>
-    <md-chip-list class="mat-chip-list-stacked">
+    <md-paginator
+        *ngIf="searchResponse?.total > 0"
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageEvent($event)">
+    </md-paginator>
+    <md-chip-list class="mat-chip-list-stacked chip-list">
       <md-chip *ngIf="searchResponse?.sources.length == 0" style="max-width:150px">
         No results found.
-      </md-chip>
-      <md-chip *ngIf="searchResponse" style="max-width:150px">
-        Total hits: {{searchResponse?.total}}.
       </md-chip>
       <md-chip *ngIf="searchResponse" style="max-width:150px">
         Search took {{searchResponse?.took_ms}}ms.

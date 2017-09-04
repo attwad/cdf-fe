@@ -19,3 +19,7 @@
   flex: 1 100%;
   margin-bottom: 8px;
 }
+
+.chip-list {
+  padding-top: 8px;
+}

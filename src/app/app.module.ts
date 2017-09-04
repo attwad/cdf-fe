@@ -20,6 +20,7 @@ import {MdSlideToggleModule} from '@angular/material';
 import {MdProgressBarModule} from '@angular/material';
 import {MdProgressSpinnerModule} from '@angular/material';
 import {MdChipsModule} from '@angular/material';
+import {MdPaginatorModule} from '@angular/material';
 
 import { AboutComponent } from './about/about.component';
 import { StatsComponent } from './stats/stats.component';
@@ -44,7 +45,8 @@ import { StatsComponent } from './stats/stats.component';
     MdSlideToggleModule,
     MdProgressBarModule,
     MdProgressSpinnerModule,
-    MdChipsModule
+    MdChipsModule,
+    MdPaginatorModule
   ],
   providers: [LessonsService, ScrollerService, StatsService],
   bootstrap: [AppComponent]
