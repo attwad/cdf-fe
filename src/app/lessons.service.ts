@@ -41,8 +41,13 @@ export class LessonsService {
       });
   }
 
-  search(query: string): Observable<SearchResponse> {
+  search(query: string, from: number, size: number): Observable<SearchResponse> {
     return this.http.get<SearchResponse>(
-      'api/search', {params: new HttpParams().set('q', query)});
+      'api/search', {
+        params: new HttpParams()
+          .set('q', query)
+          .set('from', String(from))
+          .set('size', String(size))
+      });
  }
 }

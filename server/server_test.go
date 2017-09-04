@@ -23,7 +23,7 @@ func (d *fakeDB) GetLessons(ctx context.Context, cursor string, filter db.Filter
 
 type fakeSearcher struct{}
 
-func (fs *fakeSearcher) Search(string) (*search.Response, error) {
+func (fs *fakeSearcher) Search(q string, from, size int) (*search.Response, error) {
 	return &search.Response{TookMs: 42}, nil
 }
 
@@ -61,7 +61,7 @@ func TestAPIServeLessonsFilterConverted(t *testing.T) {
 func TestAPISearch(t *testing.T) {
 	fs := &fakeSearcher{}
 	s := &server{ctx: context.Background(), searcher: fs}
-	req := httptest.NewRequest("GET", "/search?q=myquery", nil)
+	req := httptest.NewRequest("GET", "/search?q=myquery&from=2&size=10", nil)
 	w := httptest.NewRecorder()
 	s.APIServeSearch(w, req)
 

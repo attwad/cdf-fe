@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -76,7 +77,19 @@ func (s *server) APIServeSearch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "empty query", http.StatusBadRequest)
 		return
 	}
-	jsr, err := s.searcher.Search(q)
+	fStr := r.URL.Query().Get("from")
+	from, err := strconv.Atoi(fStr)
+	if err != nil {
+		http.Error(w, "from param incorrect, must be a positive number", http.StatusBadRequest)
+		return
+	}
+	sStr := r.URL.Query().Get("size")
+	size, err := strconv.Atoi(sStr)
+	if err != nil {
+		http.Error(w, "from param incorrect, must be a positive number", http.StatusBadRequest)
+		return
+	}
+	jsr, err := s.searcher.Search(q, from, size)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

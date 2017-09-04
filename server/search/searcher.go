@@ -36,7 +36,7 @@ type Response struct {
 
 // Searcher allows free-text search over the transcripts.
 type Searcher interface {
-	Search(string) (*Response, error)
+	Search(q string, from, size int) (*Response, error)
 }
 
 type elasticSearcher struct {
@@ -54,7 +54,7 @@ func NewElasticSearcher(elasticAddress string) Searcher {
 	}
 }
 
-func (e *elasticSearcher) Search(q string) (*Response, error) {
+func (e *elasticSearcher) Search(q string, from, size int) (*Response, error) {
 	u, err := url.Parse(e.elasticAddress)
 	if err != nil {
 		return nil, err
@@ -70,9 +70,13 @@ func (e *elasticSearcher) Search(q string) (*Response, error) {
 		SimpleQueryString simpleQueryString `json:"simple_query_string"`
 	}
 	type searchRequest struct {
+		From  int         `json:"from"`
+		Size  int         `json:"size"`
 		Query searchQuery `json:"query"`
 	}
 	body := &searchRequest{
+		From: from,
+		Size: size,
 		Query: searchQuery{
 			SimpleQueryString: simpleQueryString{
 				Query:           q,

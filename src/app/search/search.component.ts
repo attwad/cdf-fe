@@ -49,7 +49,7 @@ export class SearchComponent implements OnInit {
     .switchMap(query => {
       this.loading = true;
       // TODO: Why no more queries are issued after an error occurs?
-      return this.lessonsService.search(query);
+      return this.lessonsService.search(query, 0, 10);
     })
     .catch(error => {
       console.error(error);

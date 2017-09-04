@@ -64,7 +64,7 @@ func TestAPIServeLessons(t *testing.T) {
 	defer ts.Close()
 
 	s := NewElasticSearcher(ts.URL)
-	jsr, err := s.Search("a query")
+	jsr, err := s.Search("a query", 2, 5)
 	if err != nil {
 		t.Fatal(err)
 	}
