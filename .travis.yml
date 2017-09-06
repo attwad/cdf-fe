@@ -1,5 +1,5 @@
 language: go
 
 install:
-  - go get github.com/gorilla/mux cloud.google.com/go/storage github.com/attwad/cdf
+  - go get github.com/gorilla/mux github.com/gorilla/handlers cloud.google.com/go/storage github.com/attwad/cdf
 script: go test ./...
