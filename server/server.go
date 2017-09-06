@@ -7,17 +7,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/attwad/cdf-fe/server/gzip"
 	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
 	"github.com/attwad/cdf/db"
 	"github.com/attwad/cdf/health"
 	"github.com/attwad/cdf/stats/io"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -135,14 +136,6 @@ func (s *server) APIServeStats(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func newSecureGzipHandler(h http.Handler) http.Handler {
-	newHandler := gzip.NewGZipHTTPHandler(h)
-	if *enableHSTS {
-		newHandler = hsts.NewHandler(newHandler)
-	}
-	return newHandler
-}
-
 func main() {
 	flag.Parse()
 	ctx := context.Background()
@@ -172,15 +165,15 @@ func main() {
 		http.ServeFile(w, r, "dist/index.html")
 	}
 	for _, route := range []string{"/search", "/lesson{*}", "/about", "/"} {
-		r.Handle(route, newSecureGzipHandler(http.HandlerFunc(appHandler))).Methods("GET")
+		r.Handle(route, http.HandlerFunc(appHandler)).Methods("GET")
 	}
 	r.Handle(
 		"/{[a-z0-9.]+.(js|html|css)}",
-		newSecureGzipHandler(http.FileServer(http.Dir("dist")))).Methods("GET")
+		http.FileServer(http.Dir("dist"))).Methods("GET")
 
 	log.Println("Serving on", *hostPort)
 	srv := &http.Server{
-		Handler: r,
+		Handler: handlers.CombinedLoggingHandler(os.Stderr, handlers.CompressHandler(hsts.NewHandler(r))),
 		Addr:    *hostPort,
 		// Good practice: enforce timeouts.
 		WriteTimeout: 15 * time.Second,
