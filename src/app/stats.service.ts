@@ -8,6 +8,8 @@ export class Stats {
   NumTotal: number;
   ConvertedDurationSec: number;
   LeftDurationSec: number;
+  Computed: string;
+  PercentDone: number;
 }
 
 @Injectable()

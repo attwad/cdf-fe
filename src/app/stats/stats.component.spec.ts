@@ -13,6 +13,8 @@ class MockStatsService {
     stats.NumConverted = 2;
     stats.ConvertedDurationSec = 1000;
     stats.LeftDurationSec = 3000;
+    stats.Computed = "14 April 2015";
+    stats.PercentDone = 25.35555;
     return Observable.of<Stats>(stats);
   }
 }
@@ -46,6 +48,6 @@ describe('StatsComponent', () => {
   it('should output the right percentage', () => {
     de = fixture.debugElement.query(By.css('#percent'));
     el = de.nativeElement;
-    expect(el.textContent).toBe('(25%)');
+    expect(el.textContent).toBe('(25.356%)');
   });
 });
