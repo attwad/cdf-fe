@@ -10,6 +10,7 @@ import (
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/data"
 	"github.com/attwad/cdf/db"
+	"github.com/attwad/cdf/stats/io"
 )
 
 type fakeDB struct {
@@ -72,5 +73,35 @@ func TestAPISearch(t *testing.T) {
 	}
 	if !strings.Contains(string(body), "42") {
 		t.Errorf("Expected %d to be in the output but was not found: %s", 42, string(body))
+	}
+}
+
+type fakeStatsReader struct {
+	stats io.Stats
+}
+
+func (fsr *fakeStatsReader) Read(ctx context.Context) (*io.Stats, error) {
+	return &fsr.stats, nil
+}
+
+func TestAPIStats(t *testing.T) {
+	stats := io.Stats{
+		NumTotal:             400,
+		NumConverted:         52,
+		LeftDurationSec:      400,
+		ConvertedDurationSec: 100,
+	}
+	fsr := &fakeStatsReader{stats: stats}
+	s := &server{ctx: context.Background(), statsReader: fsr}
+	req := httptest.NewRequest("GET", "/stats", nil)
+	w := httptest.NewRecorder()
+	s.APIServeStats(w, req)
+
+	resp := w.Result()
+	body, _ := ioutil.ReadAll(resp.Body)
+	// {"Computed":"Jan  1 0001","NumTotal":400,"NumConverted":52,"ConvertedDurationSec":100,"LeftDurationSec":400,"PercentDone":20}
+	bs := string(body)
+	if !strings.Contains(bs, "\"PercentDone\":20") {
+		t.Errorf("PercentDone could not be found in the body: %s", string(body))
 	}
 }
