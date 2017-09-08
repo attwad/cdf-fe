@@ -33,6 +33,14 @@ const (
 	pageSize = 10
 )
 
+// ExternalCourse is what gets sent to clients, it contains formatted durations, dates etc.
+type ExternalCourse struct {
+	data.Course
+	Converted         bool   `json:"converted"`
+	FormattedDate     string `json:"date"`
+	FormattedDuration string `json:"duration"`
+}
+
 type server struct {
 	ctx         context.Context
 	db          db.Wrapper
@@ -52,13 +60,14 @@ func (s *server) APIServeLessons(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	type response struct {
-		Cursor  string                `json:"cursor"`
-		Lessons []data.ExternalCourse `json:"lessons"`
+		Cursor  string           `json:"cursor"`
+		Lessons []ExternalCourse `json:"lessons"`
 	}
-	resp := &response{Cursor: cursor, Lessons: make([]data.ExternalCourse, 0)}
+	resp := &response{Cursor: cursor, Lessons: make([]ExternalCourse, 0)}
 	for _, lesson := range lessons {
-		resp.Lessons = append(resp.Lessons, data.ExternalCourse{
+		resp.Lessons = append(resp.Lessons, ExternalCourse{
 			Course:            lesson.Course,
+			Converted:         lesson.Converted,
 			FormattedDate:     fmt.Sprintf("%d/%d/%d", lesson.Date.Day(), lesson.Date.Month(), lesson.Date.Year()),
 			FormattedDuration: fmt.Sprintf("%d min.", lesson.DurationSec/60),
 		})

@@ -21,6 +21,10 @@
       <span *ngIf="lesson.type">Lesson type: {{lesson.lesson_type}}<br></span>
       <span *ngIf="lesson.subject">Lesson subject: {{lesson.type_title}}<br></span>
       Lesson duration: {{lesson.duration}}
+      <span *ngIf="lesson.converted">
+        <br>
+        <i>This lesson is transcribed.</i>
+      </span>
     </md-card-content>
   </md-card>
 </div>

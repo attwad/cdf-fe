@@ -8,4 +8,5 @@ export class Lesson {
   public language?: string;
   public duration: number;
   public sourceURL: string;
+  public converted: boolean;
 }
