@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/attwad/cdf-fe.svg?branch=master)](https://travis-ci.org/attwad/cdf-fe)
 [![GoDoc](https://godoc.org/github.com/attwad/cdf-fe?status.png)](https://godoc.org/github.com/attwad/cdf-fe)
+[![Go Report Card](https://goreportcard.com/badge/github.com/attwad/cdf-fe)](https://goreportcard.com/report/github.com/attwad/cdf-fe)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.7.
 
