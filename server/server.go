@@ -127,9 +127,27 @@ func (s *server) APIServeStats(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	type uiStats struct {
+		Computed             string
+		NumTotal             int
+		NumConverted         int
+		ConvertedDurationSec int
+		LeftDurationSec      int
+		PercentDone          float32
+	}
+	uis := &uiStats{
+		Computed:             stats.Computed.Format("Jan _2 2006"),
+		NumTotal:             stats.NumTotal,
+		NumConverted:         stats.NumConverted,
+		ConvertedDurationSec: stats.ConvertedDurationSec,
+		LeftDurationSec:      stats.LeftDurationSec,
+	}
+	if stats.LeftDurationSec+stats.ConvertedDurationSec > 0 {
+		uis.PercentDone = float32(stats.ConvertedDurationSec) * 100 / float32(stats.LeftDurationSec+stats.ConvertedDurationSec)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
-	if err := enc.Encode(stats); err != nil {
+	if err := enc.Encode(uis); err != nil {
 		log.Println("Could not write json output:", err)
 		http.Error(w, "Could not write json", http.StatusInternalServerError)
 		return
