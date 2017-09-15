@@ -4,23 +4,30 @@
       Search audio transcripts
     </md-card-title>
     <md-card-subtitle>
-      <ul>
-        <li>+ signifies AND operation</li>
-        <li>| signifies OR operation</li>
-        <li>- negates a single token</li>
-        <li>" wraps a number of tokens to signify a phrase for searching</li>
-        <li>* at the end of a term signifies a prefix query</li>
-        <li>( and ) signify precedence</li>
-        <li>~N after a word signifies edit distance (fuzziness)</li>
-        <li>~N after a phrase signifies slop amount</li>
-      </ul>
-      Example queries:
-      <ul>
-        <li>innovation -informatique</li>
-        <li>medecine philosoph*</li>
-        <li>confucianisme | taoïsme</li>
-        <li>pharmacopée | thérapeutique</li>
-      </ul>
+      <md-expansion-panel>
+        <md-expansion-panel-header>
+          <md-panel-title>
+            Show query syntax
+          </md-panel-title>
+        </md-expansion-panel-header>
+        <ul>
+          <li>+ signifies AND operation</li>
+          <li>| signifies OR operation</li>
+          <li>- negates a single token</li>
+          <li>" wraps a number of tokens to signify a phrase for searching</li>
+          <li>* at the end of a term signifies a prefix query</li>
+          <li>( and ) signify precedence</li>
+          <li>~N after a word signifies edit distance (fuzziness)</li>
+          <li>~N after a phrase signifies slop amount</li>
+        </ul>
+        Example queries:
+        <ul>
+          <li>innovation -informatique</li>
+          <li>medecine philosoph*</li>
+          <li>confucianisme | taoïsme</li>
+          <li>pharmacopée | thérapeutique</li>
+        </ul>
+      </md-expansion-panel>
     </md-card-subtitle>
     <md-card-content>
       <md-input-container style="width:100%; max-width:350px">
