@@ -27,3 +27,7 @@
 md-paginator {
   margin-bottom: 8px;
 }
+
+#help {
+  max-width: 500px;
+}
