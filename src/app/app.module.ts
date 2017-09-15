@@ -9,6 +9,7 @@ import { SearchComponent } from './search/search.component';
 import { LessonsService } from './lessons.service';
 import { ScrollerService } from './scroller.service';
 import { StatsService } from './stats.service';
+import { StripeService } from './stripe.service';
 
 import { AppRoutingModule } from './app.routing.module';
 
@@ -25,6 +26,7 @@ import {MdExpansionModule} from '@angular/material';
 
 import { AboutComponent } from './about/about.component';
 import { StatsComponent } from './stats/stats.component';
+import { PayComponent } from './pay/pay.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { StatsComponent } from './stats/stats.component';
     LessonsComponent,
     SearchComponent,
     AboutComponent,
-    StatsComponent
+    StatsComponent,
+    PayComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +53,7 @@ import { StatsComponent } from './stats/stats.component';
     MdPaginatorModule,
     MdExpansionModule
   ],
-  providers: [LessonsService, ScrollerService, StatsService],
+  providers: [LessonsService, ScrollerService, StatsService, StripeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
