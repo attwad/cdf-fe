@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, OnInit, Input} from '@angular/core';
+import {Router, ActivatedRoute, ParamMap} from '@angular/router';
 import {PageEvent} from '@angular/material';
 import {LessonsService, SearchResponse} from '../lessons.service';
 
@@ -11,8 +11,6 @@ import 'rxjs/add/observable/of';
 
 // Observable operators
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
 
 @Component({
   selector: 'app-search',
@@ -24,7 +22,7 @@ export class SearchComponent implements OnInit {
   private searchQueries = new Subject<string>();
   loading = false;
   error?: string;
-  private query?: string;
+  query?: string;
   // MdPaginator Inputs
   total = 0;
   pageSize = 5;
@@ -32,17 +30,11 @@ export class SearchComponent implements OnInit {
 
   constructor(
       private lessonsService: LessonsService,
-      private router: Router) { }
+      private router: Router,
+      private route: ActivatedRoute) { }
 
-  // Push a search term into the observable stream.
   search(query: string): void {
-    if (!query || query.length < 2) {
-      this.searchResponse = null;
-      this.error = null;
-      this.loading = false;
-      return;
-    }
-    this.searchQueries.next(query);
+    this.router.navigate(['/search', {q: query}]);
   }
 
   onError(error: any): Observable<SearchResponse> {
@@ -54,9 +46,9 @@ export class SearchComponent implements OnInit {
   onSuccess(response: SearchResponse): void {
     if (response) {
       this.error = null;
+      this.total = response.total;
     }
     this.loading = false;
-    this.total = response.total;
     this.searchResponse = response;
   }
 
@@ -70,20 +62,17 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchQueries
-    // wait 300ms after each keystroke before considering the term
-    .debounceTime(300)
-    // ignore if next search term is same as previous
-    .distinctUntilChanged()
-    // switch to new observable each time the term changes
-    .switchMap(query => {
-      this.loading = true;
-      this.query = query;
-      // TODO: Why no more queries are issued after an error occurs?
-      return this.lessonsService.search(query, 0, this.pageSize);
-    })
-    .catch(error => this.onError(error))
-    .subscribe((response: SearchResponse) => this.onSuccess(response));
+    this.route.paramMap
+      .switchMap((params: ParamMap) => {
+        this.query = params.get('q');
+        if (this.query) {
+          return this.lessonsService.search(this.query, 0, this.pageSize);
+        } else {
+          return Observable.of<SearchResponse>(null);
+        }
+      })
+      .catch(error => this.onError(error))
+      .subscribe((response: SearchResponse) => this.onSuccess(response));
   }
 
 }

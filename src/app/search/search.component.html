@@ -24,9 +24,10 @@
     </md-card-subtitle>
     <md-card-content>
       <md-input-container style="width:100%; max-width:350px">
-        <input #searchBox mdInput autofocus
+        <input #qi mdInput autofocus
           placeholder="Enter your query..."
-          id="search-box" (keyup)="search(searchBox.value)" />
+          [value]="query"
+          (keyup.enter)="search(qi.value)" />
       </md-input-container>
     </md-card-content>
   </md-card>
@@ -72,7 +73,7 @@
     </md-paginator>
     <md-chip-list class="mat-chip-list-stacked chip-list">
       <md-chip *ngIf="searchResponse?.sources.length == 0" style="max-width:150px">
-        No results found.
+        No results found for <q>{{query}}</q>.
       </md-chip>
       <md-chip *ngIf="searchResponse" style="max-width:150px">
         Search took {{searchResponse?.took_ms}}ms.
