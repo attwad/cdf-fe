@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -30,10 +30,10 @@ func (fs *fakeSearcher) Search(q string, from, size int) (*search.Response, erro
 
 func TestAPIServeLessons(t *testing.T) {
 	db := &fakeDB{}
-	s := &server{ctx: context.Background(), db: db}
+	s := NewLessonsHandler(db)
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
-	s.APIServeLessons(w, req)
+	s.ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -49,10 +49,10 @@ func TestAPIServeLessons(t *testing.T) {
 
 func TestAPIServeLessonsFilterConverted(t *testing.T) {
 	fdb := &fakeDB{}
-	s := &server{ctx: context.Background(), db: fdb}
+	s := NewLessonsHandler(fdb)
 	req := httptest.NewRequest("GET", "/?filter=converted", nil)
 	w := httptest.NewRecorder()
-	s.APIServeLessons(w, req)
+	s.ServeHTTP(w, req)
 
 	if got, want := fdb.filter, db.FilterOnlyConverted; got != want {
 		t.Errorf("filter got=%v, want=%v", got, want)
@@ -61,10 +61,10 @@ func TestAPIServeLessonsFilterConverted(t *testing.T) {
 
 func TestAPISearch(t *testing.T) {
 	fs := &fakeSearcher{}
-	s := &server{ctx: context.Background(), searcher: fs}
+	s := NewSearchHandler(fs)
 	req := httptest.NewRequest("GET", "/search?q=myquery&from=2&size=10", nil)
 	w := httptest.NewRecorder()
-	s.APIServeSearch(w, req)
+	s.ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -92,10 +92,10 @@ func TestAPIStats(t *testing.T) {
 		ConvertedDurationSec: 100,
 	}
 	fsr := &fakeStatsReader{stats: stats}
-	s := &server{ctx: context.Background(), statsReader: fsr}
+	s := NewStatsHandler(fsr)
 	req := httptest.NewRequest("GET", "/stats", nil)
 	w := httptest.NewRecorder()
-	s.APIServeStats(w, req)
+	s.ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
