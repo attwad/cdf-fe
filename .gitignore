@@ -43,3 +43,4 @@ Thumbs.db
 
 # keys
 /college*.json
+stripe_secret_key
