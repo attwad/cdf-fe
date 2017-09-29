@@ -51,6 +51,9 @@ type postRequest struct {
 	Amount      uint64 `json:"amount"`
 }
 
+type postResponse struct {
+}
+
 type getResponse struct {
 	OneHourAmountUsdCents int `json:"one_hour_amount_usd_cents"`
 }
@@ -118,9 +121,18 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Charge successful")
 
 	// Hopefully nobody is crazy enough to give me more than max_int usd cents...
-	if err := h.broker.ChangeBalance(r.Context(), int(req.Amount)); err != nil {
+	if err := h.broker.ChangeBalance(r.Context(), 0 /*int(req.Amount)*/); err != nil {
 		log.Println("Could not change balance!", err)
 		http.Error(w, "Error increasing balance of account", http.StatusInternalServerError)
+		return
+	}
+
+	log.Println("Balance increased by", req.Amount)
+
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(&postResponse{}); err != nil {
+		log.Println("Could not write post json output:", err)
+		http.Error(w, "Could not write post json", http.StatusInternalServerError)
 		return
 	}
 }
