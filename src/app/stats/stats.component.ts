@@ -16,7 +16,7 @@ export class StatsComponent implements OnInit {
     this.statsService.getStats()
     .subscribe((stats: Stats) => {
       this.stats = stats;
-    })
+    });
   }
 
 }

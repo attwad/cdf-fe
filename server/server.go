@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/attwad/cdf-fe/server/handlers"
+	"github.com/attwad/cdf-fe/server/handlers/donation"
 	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/db"
@@ -39,9 +40,11 @@ func main() {
 	}
 	log.Println("Will connect to elastic instance @", *elasticAddress)
 	r := mux.NewRouter()
-	r.Handle("/api/lessons", handlers.NewLessonsHandler(dbWrapper)).Methods("GET")
-	r.Handle("/api/search", handlers.NewSearchHandler(search.NewElasticSearcher(*elasticAddress))).Methods("GET")
-	r.Handle("/api/stats", handlers.NewStatsHandler(sr)).Methods("GET")
+	apiRouter := r.PathPrefix("/api").Subrouter()
+	apiRouter.Handle("/lessons", handlers.NewLessonsHandler(dbWrapper)).Methods("GET")
+	apiRouter.Handle("/search", handlers.NewSearchHandler(search.NewElasticSearcher(*elasticAddress))).Methods("GET")
+	apiRouter.Handle("/stats", handlers.NewStatsHandler(sr)).Methods("GET")
+	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY")))
 	r.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress)).Methods("GET")
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")
@@ -55,7 +58,7 @@ func main() {
 
 	log.Println("Serving on", *hostPort)
 	srv := &http.Server{
-		Handler: gh.CombinedLoggingHandler(os.Stderr, gh.CompressHandler(hsts.NewHandler(r))),
+		Handler: gh.RecoveryHandler(gh.PrintRecoveryStack(true))(gh.CombinedLoggingHandler(os.Stderr, gh.CompressHandler(hsts.NewHandler(r)))),
 		Addr:    *hostPort,
 		// Good practice: enforce timeouts.
 		WriteTimeout: 15 * time.Second,

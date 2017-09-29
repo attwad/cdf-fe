@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { By }          from '@angular/platform-browser';
-import { DebugElement}  from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { DebugElement} from '@angular/core';
 import { StatsComponent } from './stats.component';
 import { StatsService, Stats } from '../stats.service';
 
 class MockStatsService {
   getStats(): Observable<Stats> {
-    let stats = new Stats();
+    const stats = new Stats();
     stats.NumTotal = 5;
     stats.NumConverted = 2;
     stats.ConvertedDurationSec = 1000;
     stats.LeftDurationSec = 3000;
-    stats.Computed = "14 April 2015";
+    stats.Computed = '14 April 2015';
     stats.PercentDone = 25.35555;
     return Observable.of<Stats>(stats);
   }

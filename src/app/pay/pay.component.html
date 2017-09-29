@@ -1,32 +1,66 @@
-<div style="margin: 16px" *ngIf="!payResponse">
-  <button md-raised-button (click)="pay(200)">Pay 200JPY</button>
+<md-progress-bar style="height:4px" mode="query" [ngClass]="{'hidden': !loading}"></md-progress-bar>
+<div [ngStyle]="{'margin': '16px', 'padding-top': loading ? '16px' : '20px'}" *ngIf="!paid">
+  Help fund audio transcriptions:<br>
+  <button *ngFor="let numHours of proposedHours"
+    [disabled]="!prepared" md-raised-button
+    class="payButton"
+    (click)="pay(numHours)">
+    {{numHours}}H ({{(numHours * oneHourAmountUsdCents / 100) + (numHours * oneHourAmountUsdCents / 100 * 0.03) | number:'1.0-2'}}$)
+  </button>
 </div>
 
-<div style="margin: 16px" *ngIf="payResponse">
-  <p>Thank you!</p>
-  <span *ngIf="payResponse.error">{{error}}</span>
-  <p>here is the list of lessons that were scheduled for transcription:</p>
-  <ul>
-    <li *ngFor="let lesson of payResponse.scheduled">{{lesson}}</li>
-  </ul>
+<div style="margin: 16px" *ngIf="paid">
+  <p><b>Thank you</b> so much!</p>
+  <p>The balance has been increased, soon transcriptions will start... stay tuned! :)</p>
 </div>
 
-<h3>Cost overview</h3>
-<p>This websites costs me about ~30$ to run per month, I am paying that myself, that includes the infrastructure to index and serve the transcripts as well as this website, domain name etc.</p>
-<p>Transcriptions <a href="https://cloud.google.com/speech/pricing">cost</a> 0.006$ per 15 seconds, that's 1.20$ an hour, the average lesson time.</p>
-<p>Stripe, the payment processing platform used by this website charges 0.3% + 30¢ per transaction, </p>
-<p>Paying for every lesson would cost me thousands of dollars which I am not ready to support hence I am counting on donations from anyone interested.</p>
-
-<h3>What happens when you donate?</h3>
-<p>When the donation is received, new lessons are automatically and randonmly scheduled to be transcribed depending on how long their are and the amount you donated.
-<br>
-Every cents of the donations will be used and will be used for transcriptions only.
-<br>
-When the transcriptions are scheduled, this page will display which lessons were scheduled thanks to you, exciting!
-</p>
-
-<h3>Why can't I chose the lessons I want transcribed?</h3>
-Consider this an experiment, I believe that the value of this website and indexing of the audio transcripts comes from the serendipity in search results, surprising people by matching their search queries with lessons they wouldn't have suspected existed.
-
-<h3>That's great, let me participate!</h3>
-<p>First of all, thank you very much, you can pick a number of lessons to transcribe or enter a custom amount yourself at the top of this page.</p>
+<md-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
+  <md-expansion-panel-header>
+    <md-panel-description>
+      Cost overview
+    </md-panel-description>
+  </md-expansion-panel-header>
+  This websites costs me about ~30$ to run per month, I am paying that myself, that includes the infrastructure to index and serve the transcripts as well as this website, domain name etc.
+  <br>
+  Audio transcriptions <a href="https://cloud.google.com/speech/pricing">cost</a> 0.006$ per 15 seconds, that's 1.44$ an hour, the average lesson time.
+  <br>
+  Stripe, the payment processing platform used by this website charges 0.3% + 30¢ per transaction.
+  <br>
+  Paying for every lesson would cost me thousands of dollars which I am not ready to support hence I am counting on donations from anyone interested.
+</md-expansion-panel>
+<md-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+  <md-expansion-panel-header>
+    <md-panel-description>
+      What happens when I donate?
+    </md-panel-description>
+  </md-expansion-panel-header>
+  When the donation is received, new lessons are automatically and randomly scheduled to be transcribed depending on how long their are and the amount you donated.
+  <br>
+  Every cents of the donations will be used and will be used for transcriptions only.
+  <br>
+  Transcriptions usually take a few minutes to be scheduled and processed, I am updating the overall <a href="/about">stats</a> on a regular basis so you can check it out!
+</md-expansion-panel>
+<md-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle="true">
+  <md-expansion-panel-header>
+    <md-panel-description>
+Can I chose the lessons to transcribe?
+</md-panel-description>
+</md-expansion-panel-header>
+No, consider this an experiment, I believe that the value of this website and indexing of the audio transcripts comes from the serendipity in search results, surprising people by matching their search queries with lessons they wouldn't have suspected existed.
+</md-expansion-panel>
+<md-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle="true">
+  <md-expansion-panel-header>
+    <md-panel-description>
+      Is this secure?
+    </md-panel-description>
+  </md-expansion-panel-header>
+  Yes, the page you're accessing should be marked as secure by your web browser, <a href="https://www.stripe.com" target="_blank">Stripe</a> is handling the credit card processing and no personal details are saved by this website so your privacy is safe too.
+</md-expansion-panel>
+<md-expansion-panel [expanded]="step === 4" (opened)="setStep(4)" hideToggle="true">
+  <md-expansion-panel-header>
+    <md-panel-description>
+      That's great, let me participate!
+    </md-panel-description>
+  </md-expansion-panel-header>
+  First of all, <b>thank you very much</b>, you can pick a transcription duration that you wish to fund at the top of this page.
+</md-expansion-panel>

@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-export interface PayResponse {
-  error?: string
-  scheduled: string[]
+export interface PrepareResponse {
+  one_hour_amount_usd_cents: number;
 }
 
 @Injectable()
@@ -12,8 +11,14 @@ export class StripeService {
 
   constructor(private http: HttpClient) { }
 
-  pay(id: string, amount: number): Observable<PayResponse> {
-    // TODO: XSRF protection.
-    return this.http.post<PayResponse>('/api/donate', {id: id, amount: amount});
+  pay(tokenId: string, email: string, amount: number): Observable<{}> {
+    // Note: XSRF protection is handled at a higher level for us.
+    // Cf. app.module.ts
+    return this.http.post<{}>('/api/donate',
+    {stripeToken: tokenId, stripeEmail: email, amount: amount});
+  }
+
+  prepare(): Observable<PrepareResponse> {
+    return this.http.get<PrepareResponse>('/api/donate');
   }
 }

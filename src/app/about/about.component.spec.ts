@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import { Component }  from '@angular/core';
+import { Component } from '@angular/core';
 
 import { AboutComponent } from './about.component';
 

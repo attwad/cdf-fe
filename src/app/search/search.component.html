@@ -37,6 +37,9 @@
           (keyup.enter)="search(qi.value)" />
       </md-input-container>
     </md-card-content>
+    <md-card-footer class="thanks">
+      This search is made possible thanks to <a href="/donate"> everyone's contributions</a>.
+    </md-card-footer>
   </md-card>
   <div>
     <md-spinner style="width:48px;height:48px;" [ngClass]="{'hidden': !loading}"></md-spinner>

@@ -4,6 +4,12 @@
     Show converted only
   </md-slide-toggle>
 </div>
+<div *ngIf="!showConvertedOnly" class="thanks">
+  These could be indexed thanks to <a href="/donate">everyone's help</a>.
+</div>
+<div *ngIf="showConvertedOnly" class="thanks">
+  These were all indexed thanks to <a href="/donate">everyone's help</a>.
+</div>
 <div class="flex-container">
   <md-card
     *ngFor="let lesson of lessons"

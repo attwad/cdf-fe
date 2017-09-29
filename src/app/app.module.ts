@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { LessonsComponent } from './lessons/lessons.component';
@@ -41,7 +41,6 @@ import { PayComponent } from './pay/pay.component';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    AppRoutingModule,
     MdToolbarModule,
     MdCardModule,
     MdButtonModule,
@@ -51,7 +50,9 @@ import { PayComponent } from './pay/pay.component';
     MdProgressSpinnerModule,
     MdChipsModule,
     MdPaginatorModule,
-    MdExpansionModule
+    MdExpansionModule,
+
+    AppRoutingModule
   ],
   providers: [LessonsService, ScrollerService, StatsService, StripeService],
   bootstrap: [AppComponent]
