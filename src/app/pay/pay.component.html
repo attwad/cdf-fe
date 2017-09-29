@@ -2,7 +2,7 @@
 <div [ngStyle]="{'margin': '16px', 'padding-top': loading ? '16px' : '20px'}" *ngIf="!paid">
   Help fund audio transcriptions:<br>
   <button *ngFor="let numHours of proposedHours"
-    [disabled]="!prepared" md-raised-button
+    [disabled]="oneHourAmountInUsdCents === 0" md-raised-button
     class="payButton"
     (click)="pay(numHours)">
     {{numHours}}H ({{(numHours * oneHourAmountUsdCents / 100) + (numHours * oneHourAmountUsdCents / 100 * 0.03) | number:'1.0-2'}}$)

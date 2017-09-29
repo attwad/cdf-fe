@@ -21,9 +21,10 @@ import (
 )
 
 var (
-	hostPort       = flag.String("listen_addr", "127.0.0.1:8080", "Address to listen on.")
-	projectID      = flag.String("project_id", "college-de-france", "Google cloud project.")
-	elasticAddress = flag.String("elastic_address", "", "HTTP address to elastic instance")
+	hostPort             = flag.String("listen_addr", "127.0.0.1:8080", "Address to listen on.")
+	projectID            = flag.String("project_id", "college-de-france", "Google cloud project.")
+	elasticAddress       = flag.String("elastic_address", "http://localhost:9002", "HTTP address to elastic instance")
+	stripePublishableKey = flag.String("stripe_publishable_key", "pk_test_VpXluQcCGGQVNgg0j0abLR5m", "Publishable key to use with stripe API")
 )
 
 func main() {
@@ -49,7 +50,7 @@ func main() {
 	apiRouter.Handle("/lessons", handlers.NewLessonsHandler(dbWrapper)).Methods("GET")
 	apiRouter.Handle("/search", handlers.NewSearchHandler(search.NewElasticSearcher(*elasticAddress))).Methods("GET")
 	apiRouter.Handle("/stats", handlers.NewStatsHandler(sr)).Methods("GET")
-	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY"), broker))
+	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY"), *stripePublishableKey, broker))
 	r.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress)).Methods("GET")
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")

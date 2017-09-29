@@ -10,8 +10,8 @@ import { StripeService, PrepareResponse } from '../stripe.service';
 })
 export class PayComponent implements OnInit {
 
-  prepared = false;
   oneHourAmountUsdCents = 0;
+  prepareResponse?: PrepareResponse;
   proposedHours = [1, 3, 5, 10];
   loading = false;
   paid = false;
@@ -25,7 +25,7 @@ export class PayComponent implements OnInit {
     .subscribe((prepareResponse: PrepareResponse) => {
       console.log('Got prepare response', prepareResponse);
       this.loading = false;
-      this.prepared = true;
+      this.prepareResponse = prepareResponse;
       this.oneHourAmountUsdCents = prepareResponse.one_hour_amount_usd_cents;
     });
   }
@@ -33,7 +33,7 @@ export class PayComponent implements OnInit {
   pay(numHours: number): void {
     const amount = numHours * this.oneHourAmountUsdCents;
     const handler = (<any>window).StripeCheckout.configure({
-      key: 'pk_test_VpXluQcCGGQVNgg0j0abLR5m',
+      key: this.prepareResponse.stripe_publishable_key,
       locale: 'auto',
       zipCode: true,
       allowRememberMe: false,

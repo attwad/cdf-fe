@@ -11,6 +11,8 @@ import (
 	stripe "github.com/stripe/stripe-go"
 )
 
+const pubKey = "a publishable key"
+
 type fakeStripeAPIWrapper struct {
 	errCharge      error
 	errNewCustomer error
@@ -88,7 +90,7 @@ func TestHTTPHandlerPOST(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		h := &donateHandler{&test.api, &test.broker}
+		h := &donateHandler{&test.api, &test.broker, pubKey}
 		b, err := json.Marshal(&test.req)
 		if err != nil {
 			t.Errorf("[%s]: marshalling request:%s", test.msg, err)
@@ -110,7 +112,7 @@ func TestHTTPHandlerPOST(t *testing.T) {
 }
 
 func TestHTTPHandlerGET(t *testing.T) {
-	h := &donateHandler{&fakeStripeAPIWrapper{}, nil}
+	h := &donateHandler{&fakeStripeAPIWrapper{}, nil, pubKey}
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -127,5 +129,9 @@ func TestHTTPHandlerGET(t *testing.T) {
 	}
 	if got, want := gr.OneHourAmountUsdCents, 144; got != want {
 		t.Errorf("one hour amount got=%d, want=%d", got, want)
+	}
+
+	if got, want := gr.StripePublishableKey, pubKey; got != want {
+		t.Errorf("stripe publishable key preparation, got=%q, want=%q", got, want)
 	}
 }

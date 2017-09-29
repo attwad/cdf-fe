@@ -14,18 +14,20 @@ import (
 )
 
 type donateHandler struct {
-	wrapper stripeWrapper
-	broker  money.Broker
+	wrapper              stripeWrapper
+	broker               money.Broker
+	stripePublishableKey string
 }
 
 const minPaymentsUsdCents = 100
 
 // NewStripeHandler handles HTTP requests for donations via Stripe.
-func NewStripeHandler(privateKey string, broker money.Broker) http.Handler {
+func NewStripeHandler(privateKey, publishableKey string, broker money.Broker) http.Handler {
 	stripe.Key = privateKey
 	return &donateHandler{
-		wrapper: &stripeAPIWrapper{},
-		broker:  broker,
+		wrapper:              &stripeAPIWrapper{},
+		broker:               broker,
+		stripePublishableKey: publishableKey,
 	}
 }
 
@@ -55,13 +57,15 @@ type postResponse struct {
 }
 
 type getResponse struct {
-	OneHourAmountUsdCents int `json:"one_hour_amount_usd_cents"`
+	OneHourAmountUsdCents int    `json:"one_hour_amount_usd_cents"`
+	StripePublishableKey  string `json:"stripe_publishable_key"`
 }
 
 func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		gr := getResponse{
 			OneHourAmountUsdCents: money.DurationToUsdCents(1 * time.Hour),
+			StripePublishableKey:  h.stripePublishableKey,
 		}
 		enc := json.NewEncoder(w)
 		if err := enc.Encode(&gr); err != nil {
@@ -121,7 +125,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Charge successful")
 
 	// Hopefully nobody is crazy enough to give me more than max_int usd cents...
-	if err := h.broker.ChangeBalance(r.Context(), 0 /*int(req.Amount)*/); err != nil {
+	if err := h.broker.ChangeBalance(r.Context(), int(req.Amount)); err != nil {
 		log.Println("Could not change balance!", err)
 		http.Error(w, "Error increasing balance of account", http.StatusInternalServerError)
 		return

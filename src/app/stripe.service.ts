@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 export interface PrepareResponse {
   one_hour_amount_usd_cents: number;
+  stripe_publishable_key: string;
 }
 
 @Injectable()
