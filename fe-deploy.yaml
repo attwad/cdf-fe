@@ -24,7 +24,7 @@ spec:
           secretName: frontend-key
       containers:
       - name: fe
-        image: eu.gcr.io/college-de-france/fe:prod-v1.2.3
+        image: eu.gcr.io/college-de-france/fe:prod-v1.3.1
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
@@ -33,8 +33,13 @@ spec:
           value: dns
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/secrets/google/key.json
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-sk
+              key: stripe_secret_key
         command: ["go-wrapper"]
-        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80", "--elastic_address=http://elasticsearch:9200"]
+        args: ["run", "--project_id=college-de-france", "--listen_addr=0.0.0.0:80", "--elastic_address=http://elasticsearch:9200", "--stripe_publishable_key=pk_live_C4bDgSBhRDARDhx07RCCVdey"]
         ports:
         - containerPort: 80
           name: http
