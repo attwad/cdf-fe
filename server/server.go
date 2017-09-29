@@ -14,6 +14,7 @@ import (
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/db"
 	"github.com/attwad/cdf/health"
+	"github.com/attwad/cdf/money"
 	"github.com/attwad/cdf/stats/io"
 	gh "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -38,13 +39,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	broker, err := money.NewDatastoreBroker(ctx, *projectID)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println("Will connect to elastic instance @", *elasticAddress)
 	r := mux.NewRouter()
 	apiRouter := r.PathPrefix("/api").Subrouter()
 	apiRouter.Handle("/lessons", handlers.NewLessonsHandler(dbWrapper)).Methods("GET")
 	apiRouter.Handle("/search", handlers.NewSearchHandler(search.NewElasticSearcher(*elasticAddress))).Methods("GET")
 	apiRouter.Handle("/stats", handlers.NewStatsHandler(sr)).Methods("GET")
-	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY")))
+	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY"), broker))
 	r.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress)).Methods("GET")
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")

@@ -15,16 +15,18 @@ import (
 
 type donateHandler struct {
 	wrapper stripeWrapper
+	broker  money.Broker
 }
 
-const (
-	minPaymentsUsdCents = 100
-)
+const minPaymentsUsdCents = 100
 
 // NewStripeHandler handles HTTP requests for donations via Stripe.
-func NewStripeHandler(privateKey string) http.Handler {
+func NewStripeHandler(privateKey string, broker money.Broker) http.Handler {
 	stripe.Key = privateKey
-	return &donateHandler{wrapper: &stripeAPIWrapper{}}
+	return &donateHandler{
+		wrapper: &stripeAPIWrapper{},
+		broker:  broker,
+	}
 }
 
 type stripeWrapper interface {
@@ -114,4 +116,11 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Charge successful")
+
+	// Hopefully nobody is crazy enough to give me more than max_int usd cents...
+	if err := h.broker.ChangeBalance(r.Context(), int(req.Amount)); err != nil {
+		log.Println("Could not change balance!", err)
+		http.Error(w, "Error increasing balance of account", http.StatusInternalServerError)
+		return
+	}
 }
