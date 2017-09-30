@@ -10,7 +10,7 @@ class MockStripeService {
   }
 
   prepare(): Observable<PrepareResponse> {
-    return Observable.of({one_hour_amount_usd_cents: 200});
+    return Observable.of({one_hour_amount_usd_cents: 200, stripe_publishable_key: 'pubkey'});
   }
 }
 
@@ -43,11 +43,12 @@ describe('PayComponent', () => {
   it('should have sane defaults', () => {
     expect(component.loading).toBeFalsy();
     expect(component.paid).toBeFalsy();
-    expect(component.prepared).toBeTruthy();
+    expect(component.prepareResponse).toBeDefined();
   });
 
   it('Should get the initial cost per hour', () => {
-    expect(component.oneHourAmountUsdCents).toEqual(200);
+    expect(component.prepareResponse.one_hour_amount_usd_cents).toEqual(200);
+    expect(component.prepareResponse.stripe_publishable_key).toEqual('pubkey');
   });
 
   it('should set steps', () => {
