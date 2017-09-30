@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
@@ -54,7 +54,7 @@ import { PayComponent } from './pay/pay.component';
 
     AppRoutingModule
   ],
-  providers: [LessonsService, ScrollerService, StatsService, StripeService],
+  providers: [Title, LessonsService, ScrollerService, StatsService, StripeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

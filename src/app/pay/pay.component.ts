@@ -1,6 +1,7 @@
 /// <reference types="stripe-checkout"/>
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 
 import { StripeService, PrepareResponse } from '../stripe.service';
 
@@ -23,7 +24,11 @@ export class PayComponent implements OnInit {
   step = 0;
   error: string;
 
-  constructor(private stripeService: StripeService) { }
+  constructor(
+    title: Title,
+    private stripeService: StripeService) {
+      title.setTitle('Contribute to College de France audio transcripts');
+    }
 
   ngOnInit() {
     this.loading = true;

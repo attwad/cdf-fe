@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-about',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AboutComponent {
 
-  constructor() {}
+  constructor(title: Title) {
+    title.setTitle('About College de France audio transcripts');
+  }
 
 }

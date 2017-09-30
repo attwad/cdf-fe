@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, ActivatedRoute, ParamMap} from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 import {Lesson} from '../lesson';
 import {LessonsService, LessonsResponse} from '../lessons.service';
@@ -19,10 +20,13 @@ export class LessonsComponent implements OnInit {
   loading = false;
 
   constructor(
+    title: Title,
     private scrollerService: ScrollerService,
     private route: ActivatedRoute,
     private lessonsService: LessonsService,
-    private router: Router) {}
+    private router: Router) {
+      title.setTitle('Browse College de France audio transcripts');
+    }
 
   ngOnInit() {
     this.route.paramMap

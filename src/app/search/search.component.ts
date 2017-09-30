@@ -1,4 +1,5 @@
 import { Component, OnInit, Input} from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import {Router, ActivatedRoute, ParamMap} from '@angular/router';
 import {PageEvent} from '@angular/material';
 import {LessonsService, SearchResponse} from '../lessons.service';
@@ -29,9 +30,12 @@ export class SearchComponent implements OnInit {
   pageSizeOptions = [5, 10, 25, 50];
 
   constructor(
+      title: Title,
       private lessonsService: LessonsService,
       private router: Router,
-      private route: ActivatedRoute) { }
+      private route: ActivatedRoute) {
+        title.setTitle('Search College de France audio transcripts');
+      }
 
   search(query: string): void {
     this.router.navigate(['/search', {q: query}]);
