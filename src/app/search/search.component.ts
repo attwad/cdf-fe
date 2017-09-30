@@ -70,6 +70,7 @@ export class SearchComponent implements OnInit {
       .switchMap((params: ParamMap) => {
         this.query = params.get('q');
         if (this.query) {
+          this.loading = true;
           return this.lessonsService.search(this.query, 0, this.pageSize);
         } else {
           return Observable.of<SearchResponse>(null);
