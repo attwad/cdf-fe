@@ -24,7 +24,7 @@ spec:
           secretName: fe-key
       containers:
       - name: fe
-        image: eu.gcr.io/college-de-france/fe:prod-v1.3.3
+        image: eu.gcr.io/college-de-france/fe:prod-v1.3.4
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
