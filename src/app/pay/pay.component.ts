@@ -1,5 +1,6 @@
 /// <reference types="stripe-checkout"/>
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { StripeService, PrepareResponse } from '../stripe.service';
 
@@ -20,6 +21,7 @@ export class PayComponent implements OnInit {
   loading = false;
   paid = false;
   step = 0;
+  error: string;
 
   constructor(private stripeService: StripeService) { }
 
@@ -41,6 +43,11 @@ export class PayComponent implements OnInit {
         });
       })
       console.log("proposed payments:", this.proposedHours);
+    },
+    (err: HttpErrorResponse) => {
+      console.error("error preparing:", err);
+      this.error = err.message;
+      this.loading = false;
     });
   }
 
@@ -56,6 +63,11 @@ export class PayComponent implements OnInit {
         .subscribe(() => {
           console.log('Got pay response');
           this.paid = true;
+          this.loading = false;
+        },
+        (err: HttpErrorResponse) => {
+          console.error("error paying:", err);
+          this.error = err.message;
           this.loading = false;
         });
       }

@@ -14,6 +14,12 @@
   <p>The balance has been increased, soon transcriptions will start... stay tuned! :)</p>
 </div>
 
+<md-chip-list class="mat-chip-list-stacked chip-list">
+  <md-chip *ngIf="error" selected="true" color="warn">
+    {{error}}
+  </md-chip>
+</md-chip-list>
+
 <md-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
   <md-expansion-panel-header>
     <md-panel-description>
