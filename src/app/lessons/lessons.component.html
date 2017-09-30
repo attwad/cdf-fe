@@ -5,11 +5,16 @@
   </md-slide-toggle>
 </div>
 <div *ngIf="!showConvertedOnly" class="thanks">
-  These could be indexed thanks to <a href="/donate">everyone's help</a>.
+  These can be indexed with <a href="/donate">everyone's help</a>.
 </div>
 <div *ngIf="showConvertedOnly" class="thanks">
   These were all indexed thanks to <a href="/donate">everyone's help</a>.
 </div>
+<md-chip-list *ngIf="error" class="mat-chip-list-stacked chip-list">
+  <md-chip selected="true" color="warn">
+    {{error}}
+  </md-chip>
+</md-chip-list>
 <div class="flex-container">
   <md-card
     *ngFor="let lesson of lessons"

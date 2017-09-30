@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { HttpErrorResponse } from '@angular/common/http';
 import { StatsService, Stats } from '../stats.service';
 
 @Component({
@@ -9,6 +9,7 @@ import { StatsService, Stats } from '../stats.service';
 })
 export class StatsComponent implements OnInit {
   stats: Stats;
+  hasError = false;
 
   constructor(private statsService: StatsService) { }
 
@@ -16,6 +17,10 @@ export class StatsComponent implements OnInit {
     this.statsService.getStats()
     .subscribe((stats: Stats) => {
       this.stats = stats;
+    },
+    (err: HttpErrorResponse) => {
+      console.error("error getting stats:", err);
+      this.hasError = true;
     });
   }
 

@@ -8,3 +8,8 @@
     <span id="percent">({{stats.PercentDone | number:'1.0-3'}}%)</span>
   </md-card-content>
 </md-card>
+<md-chip-list *ngIf="hasError" class="mat-chip-list-stacked chip-list">
+  <md-chip selected="true" color="warn">
+    Sorry, stats will be available soon.
+  </md-chip>
+</md-chip-list>

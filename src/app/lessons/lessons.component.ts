@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, ActivatedRoute, ParamMap} from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import {Lesson} from '../lesson';
 import {LessonsService, LessonsResponse} from '../lessons.service';
@@ -18,6 +19,7 @@ export class LessonsComponent implements OnInit {
   cursor?: string;
   showConvertedOnly = false;
   loading = false;
+  error: string;
 
   constructor(
     title: Title,
@@ -47,6 +49,11 @@ export class LessonsComponent implements OnInit {
         this.loading = false;
         console.log('fetched new lessons, cursor=', this.cursor);
         this.scrollerService.scrollToTop();
+      },
+      (err: HttpErrorResponse) => {
+        console.error("error preparing:", err);
+        this.error = err.message;
+        this.loading = false;
       });
   }
 

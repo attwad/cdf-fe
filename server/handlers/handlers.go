@@ -93,17 +93,20 @@ func (s *searchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fStr := r.URL.Query().Get("from")
 	from, err := strconv.Atoi(fStr)
 	if err != nil {
+		log.Println("getting from param:", err)
 		http.Error(w, "from param incorrect, must be a positive number", http.StatusBadRequest)
 		return
 	}
 	sStr := r.URL.Query().Get("size")
 	size, err := strconv.Atoi(sStr)
 	if err != nil {
+		log.Println("getting size param:", err)
 		http.Error(w, "from param incorrect, must be a positive number", http.StatusBadRequest)
 		return
 	}
 	jsr, err := s.searcher.Search(q, from, size)
 	if err != nil {
+		log.Println("searching:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
