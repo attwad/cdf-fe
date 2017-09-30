@@ -5,7 +5,7 @@
     [disabled]="oneHourAmountInUsdCents === 0" md-raised-button
     class="payButton"
     (click)="pay(numHours)">
-    {{numHours}}H ({{(numHours * oneHourAmountUsdCents / 100) + (numHours * oneHourAmountUsdCents / 100 * 0.03) | number:'1.0-2'}}$)
+    {{numHours}}H ({{(numHours * oneHourAmountUsdCents / 100) + (numHours * oneHourAmountUsdCents / 100 * 0.03) + 0.3 | number:'1.0-2'}}$)
   </button>
 </div>
 

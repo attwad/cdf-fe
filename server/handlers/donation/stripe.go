@@ -111,7 +111,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	chargeParams := &stripe.ChargeParams{
 		Amount:   req.Amount,
 		Currency: "usd",
-		Desc:     "college-audio.science transcriptions",
+		Desc:     "college-audio.science audio transcriptions",
 		Customer: newCustomer.ID,
 	}
 
