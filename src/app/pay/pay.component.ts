@@ -3,6 +3,11 @@ import { Component, OnInit } from '@angular/core';
 
 import { StripeService, PrepareResponse } from '../stripe.service';
 
+interface proposition {
+  hours: number
+  priceUsdCents: number
+}
+
 @Component({
   selector: 'app-pay',
   templateUrl: './pay.component.html',
@@ -10,9 +15,8 @@ import { StripeService, PrepareResponse } from '../stripe.service';
 })
 export class PayComponent implements OnInit {
 
-  oneHourAmountUsdCents = 0;
   prepareResponse?: PrepareResponse;
-  proposedHours = [1, 3, 5, 10];
+  proposedHours = new Array<proposition>();
   loading = false;
   paid = false;
   step = 0;
@@ -26,12 +30,21 @@ export class PayComponent implements OnInit {
       console.log('Got prepare response', prepareResponse);
       this.loading = false;
       this.prepareResponse = prepareResponse;
-      this.oneHourAmountUsdCents = prepareResponse.one_hour_amount_usd_cents;
+      [1, 3, 5, 10].forEach((hours) => {
+        this.proposedHours.push({
+          hours: hours,
+          priceUsdCents:
+            (hours * prepareResponse.one_hour_amount_usd_cents)
+            // Add stripe fees (3% + 30c).
+            + (hours * prepareResponse.one_hour_amount_usd_cents * 0.03)
+            + 30
+        });
+      })
+      console.log("proposed payments:", this.proposedHours);
     });
   }
 
-  pay(numHours: number): void {
-    const amount = numHours * this.oneHourAmountUsdCents;
+  pay(hours, amount): void {
     const handler = (<any>window).StripeCheckout.configure({
       key: this.prepareResponse.stripe_publishable_key,
       locale: 'auto',
@@ -51,7 +64,7 @@ export class PayComponent implements OnInit {
     handler.open({
       name: 'college-audio.science',
       currency: 'USD',
-      description: numHours + 'H of audio transcriptions',
+      description: hours + 'H of audio transcriptions',
       amount: amount
     });
   }

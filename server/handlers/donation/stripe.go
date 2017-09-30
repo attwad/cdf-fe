@@ -48,9 +48,9 @@ func (s *stripeAPIWrapper) NewCustomer(p *stripe.CustomerParams) (*stripe.Custom
 }
 
 type postRequest struct {
-	StripeToken string `json:"stripeToken"`
-	StripeEmail string `json:"stripeEmail"`
-	Amount      uint64 `json:"amount"`
+	StripeToken    string `json:"stripeToken"`
+	StripeEmail    string `json:"stripeEmail"`
+	AmountUsdCents uint64 `json:"amountUsdCents"`
 }
 
 type postResponse struct {
@@ -91,7 +91,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Request parsed:", req)
 
-	if req.Amount < minPaymentsUsdCents {
+	if req.AmountUsdCents < minPaymentsUsdCents {
 		log.Println("amount must be >=", minPaymentsUsdCents)
 		http.Error(w, fmt.Sprintf("amount must be >= %d", minPaymentsUsdCents), http.StatusBadRequest)
 		return
@@ -109,7 +109,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Customer created")
 
 	chargeParams := &stripe.ChargeParams{
-		Amount:   req.Amount,
+		Amount:   req.AmountUsdCents,
 		Currency: "usd",
 		Desc:     "college-audio.science audio transcriptions",
 		Customer: newCustomer.ID,
@@ -125,13 +125,13 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Charge successful")
 
 	// Hopefully nobody is crazy enough to give me more than max_int usd cents...
-	if err := h.broker.ChangeBalance(r.Context(), int(req.Amount)); err != nil {
+	if err := h.broker.ChangeBalance(r.Context(), int(req.AmountUsdCents)); err != nil {
 		log.Println("Could not change balance!", err)
 		http.Error(w, "Error increasing balance of account", http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("Balance increased by", req.Amount)
+	log.Println("Balance increased by", req.AmountUsdCents)
 
 	enc := json.NewEncoder(w)
 	if err := enc.Encode(&postResponse{}); err != nil {

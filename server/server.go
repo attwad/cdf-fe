@@ -55,7 +55,7 @@ func main() {
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")
 	}
-	for _, route := range []string{"/search{*}", "/lesson{*}", "/about", "/donate", "/"} {
+	for _, route := range []string{"/searc{*}", "/lesson{*}", "/about", "/donate", "/"} {
 		r.Handle(route, http.HandlerFunc(appHandler)).Methods("GET")
 	}
 	r.Handle(

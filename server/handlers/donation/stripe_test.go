@@ -55,35 +55,35 @@ func TestHTTPHandlerPOST(t *testing.T) {
 	}{
 		{
 			msg:         "charge succeeds",
-			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", Amount: minPaymentsUsdCents * 2},
+			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
 			requestType: "POST",
 			wantStatus:  200,
 			wantBalance: minPaymentsUsdCents * 2,
 		}, {
 			msg:         "too small amount",
-			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", Amount: minPaymentsUsdCents - 1},
+			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents - 1},
 			requestType: "POST",
 			wantStatus:  400,
 		}, {
 			msg:         "fail on new charge",
-			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", Amount: minPaymentsUsdCents * 2},
+			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
 			api:         fakeStripeAPIWrapper{errCharge: errors.New("invalid charge")},
 			requestType: "POST",
 			wantStatus:  500,
 		}, {
 			msg:         "fail on new customer",
-			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", Amount: minPaymentsUsdCents * 2},
+			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
 			api:         fakeStripeAPIWrapper{errNewCustomer: errors.New("invalid customer")},
 			requestType: "POST",
 			wantStatus:  500,
 		}, {
 			msg:         "wrong request type",
-			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", Amount: minPaymentsUsdCents * 2},
+			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
 			requestType: "TRACE",
 			wantStatus:  405,
 		}, {
 			msg:         "change balance fails",
-			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", Amount: minPaymentsUsdCents * 2},
+			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
 			requestType: "POST",
 			broker:      fakeBroker{balanceError: errors.New("wrong balance")},
 			wantStatus:  500,
@@ -128,7 +128,7 @@ func TestHTTPHandlerGET(t *testing.T) {
 		t.Fatalf("unmarshalling response:%s", err)
 	}
 	if got, want := gr.OneHourAmountUsdCents, 144; got != want {
-		t.Errorf("one hour amount got=%d, want=%d", got, want)
+		t.Errorf("one hour amountUsdCents got=%d, want=%d", got, want)
 	}
 
 	if got, want := gr.StripePublishableKey, pubKey; got != want {

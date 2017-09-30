@@ -12,11 +12,14 @@ export class StripeService {
 
   constructor(private http: HttpClient) { }
 
-  pay(tokenId: string, email: string, amount: number): Observable<{}> {
+  pay(tokenId: string, email: string, amountUsdCents: number): Observable<{}> {
     // Note: XSRF protection is handled at a higher level for us.
     // Cf. app.module.ts
     return this.http.post<{}>('/api/donate',
-    {stripeToken: tokenId, stripeEmail: email, amount: amount});
+    {
+      stripeToken: tokenId, stripeEmail: email,
+      amountUsdCents: Math.floor(amountUsdCents)
+    });
   }
 
   prepare(): Observable<PrepareResponse> {

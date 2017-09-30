@@ -1,11 +1,11 @@
 <md-progress-bar style="height:4px" mode="query" [ngClass]="{'hidden': !loading}"></md-progress-bar>
 <div [ngStyle]="{'margin': '16px', 'padding-top': loading ? '16px' : '20px'}" *ngIf="!paid">
   Help fund audio transcriptions:<br>
-  <button *ngFor="let numHours of proposedHours"
-    [disabled]="oneHourAmountInUsdCents === 0" md-raised-button
+  <button *ngFor="let suggestion of proposedHours"
+    md-raised-button
     class="payButton"
-    (click)="pay(numHours)">
-    {{numHours}}H ({{(numHours * oneHourAmountUsdCents / 100) + (numHours * oneHourAmountUsdCents / 100 * 0.03) + 0.3 | number:'1.0-2'}}$)
+    (click)="pay(suggestion.hours, suggestion.priceUsdCents)">
+    {{suggestion.hours}}H ({{suggestion.priceUsdCents / 100 | number:'1.0-2'}}$)
   </button>
 </div>
 
