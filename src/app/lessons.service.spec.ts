@@ -1,4 +1,4 @@
-import { TestBed, inject, async } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 
 import { LessonsService, LessonsResponse, SearchResponse } from './lessons.service';
@@ -15,7 +15,7 @@ describe('LessonsService', () => {
     expect(service).toBeTruthy();
   }));
 
-  it('should get converted lessons', async(inject([LessonsService, HttpTestingController],
+  it('should get converted lessons', inject([LessonsService, HttpTestingController],
       (service: LessonsService, httpMock: HttpTestingController) => {
     expect(service).toBeTruthy();
     service.getLessons(true, 'c1').subscribe((response: LessonsResponse) => {
@@ -26,9 +26,9 @@ describe('LessonsService', () => {
     expect(req.request.method).toEqual('GET');
     req.flush({cursor: 'the next cursor'});
     httpMock.verify();
-  })));
+  }));
 
-  it('should get non converted lessons', async(inject([LessonsService, HttpTestingController],
+  it('should get non converted lessons', inject([LessonsService, HttpTestingController],
       (service: LessonsService, httpMock: HttpTestingController) => {
     expect(service).toBeTruthy();
     service.getLessons(false, 'c2').subscribe((response: LessonsResponse) => {
@@ -39,9 +39,9 @@ describe('LessonsService', () => {
     expect(req.request.method).toEqual('GET');
     req.flush({cursor: 'the next cursor'});
     httpMock.verify();
-  })));
+  }));
 
-  it('should search', async(inject([LessonsService, HttpTestingController],
+  it('should search', inject([LessonsService, HttpTestingController],
       (service: LessonsService, httpMock: HttpTestingController) => {
     expect(service).toBeTruthy();
     service.search('a query', 5, 10).subscribe((response: SearchResponse) => {
@@ -62,5 +62,5 @@ describe('LessonsService', () => {
       sources: []
     });
     httpMock.verify();
-  })));
+  }));
 });
