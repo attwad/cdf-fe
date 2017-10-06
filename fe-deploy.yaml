@@ -25,6 +25,9 @@ spec:
       containers:
       - name: fe
         image: eu.gcr.io/college-de-france/fe:prod-v1.3.5
+        resources:
+          requests:
+            cpu: "10m"
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
