@@ -13,6 +13,7 @@ import (
 	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/db"
+	"github.com/attwad/cdf/errorreport"
 	"github.com/attwad/cdf/health"
 	"github.com/attwad/cdf/money"
 	"github.com/attwad/cdf/stats/io"
@@ -38,19 +39,25 @@ func main() {
 	}
 	sr, err := io.NewDatastoreReader(ctx, *projectID)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("creating datastore reader: %v", err)
 	}
 	broker, err := money.NewDatastoreBroker(ctx, *projectID)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("creating datastore broker: %v", err)
 	}
+	er, err := errorreport.NewStackdriverReporter(ctx, *projectID, "fe")
+	if err != nil {
+		log.Fatalf("Creating error reporting client: %v", err)
+	}
+	defer er.Close()
+
 	log.Println("Will connect to elastic instance @", *elasticAddress)
 	r := mux.NewRouter()
 	apiRouter := r.PathPrefix("/api").Subrouter()
 	apiRouter.Handle("/lessons", handlers.NewLessonsHandler(dbWrapper)).Methods("GET")
 	apiRouter.Handle("/search", handlers.NewSearchHandler(search.NewElasticSearcher(*elasticAddress))).Methods("GET")
 	apiRouter.Handle("/stats", handlers.NewStatsHandler(sr)).Methods("GET")
-	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY"), *stripePublishableKey, broker))
+	apiRouter.Handle("/donate", donation.NewStripeHandler(os.Getenv("STRIPE_SECRET_KEY"), *stripePublishableKey, broker, er))
 	r.Handle("/healthz", health.NewElasticHealthChecker(*elasticAddress)).Methods("GET")
 	appHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "dist/index.html")

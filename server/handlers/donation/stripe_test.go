@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	stripe "github.com/stripe/stripe-go"
@@ -43,6 +44,18 @@ func (b *fakeBroker) ChangeBalance(ctx context.Context, delta int) error {
 	return nil
 }
 
+type fakeReporter struct {
+	reported error
+}
+
+func (f *fakeReporter) Report(err error) {
+	f.reported = err
+}
+
+func (f *fakeReporter) Close() error {
+	return nil
+}
+
 func TestHTTPHandlerPOST(t *testing.T) {
 	tests := []struct {
 		msg         string
@@ -52,6 +65,7 @@ func TestHTTPHandlerPOST(t *testing.T) {
 		requestType string
 		broker      fakeBroker
 		wantBalance int
+		wantErr     string
 	}{
 		{
 			msg:         "charge succeeds",
@@ -70,12 +84,14 @@ func TestHTTPHandlerPOST(t *testing.T) {
 			api:         fakeStripeAPIWrapper{errCharge: errors.New("invalid charge")},
 			requestType: "POST",
 			wantStatus:  500,
+			wantErr:     "invalid charge",
 		}, {
 			msg:         "fail on new customer",
 			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
 			api:         fakeStripeAPIWrapper{errNewCustomer: errors.New("invalid customer")},
 			requestType: "POST",
 			wantStatus:  500,
+			wantErr:     "invalid customer",
 		}, {
 			msg:         "wrong request type",
 			req:         postRequest{StripeEmail: "foo@bar.com", StripeToken: "tok", AmountUsdCents: minPaymentsUsdCents * 2},
@@ -87,10 +103,12 @@ func TestHTTPHandlerPOST(t *testing.T) {
 			requestType: "POST",
 			broker:      fakeBroker{balanceError: errors.New("wrong balance")},
 			wantStatus:  500,
+			wantErr:     "wrong balance",
 		},
 	}
 	for _, test := range tests {
-		h := &donateHandler{&test.api, &test.broker, pubKey}
+		fr := &fakeReporter{reported: errors.New("")}
+		h := &donateHandler{&test.api, &test.broker, pubKey, fr}
 		b, err := json.Marshal(&test.req)
 		if err != nil {
 			t.Errorf("[%s]: marshalling request:%s", test.msg, err)
@@ -108,11 +126,15 @@ func TestHTTPHandlerPOST(t *testing.T) {
 		if got, want := test.broker.balance, test.wantBalance; got != want {
 			t.Errorf("[%s] balance got=%d, want=%d", test.msg, got, want)
 		}
+		if got, want := fr.reported.Error(), test.wantErr; !strings.Contains(got, want) {
+			t.Errorf("[%s] error not contained, got=%q, want=%q", test.msg, got, want)
+		}
 	}
 }
 
 func TestHTTPHandlerGET(t *testing.T) {
-	h := &donateHandler{&fakeStripeAPIWrapper{}, nil, pubKey}
+	fr := &fakeReporter{}
+	h := &donateHandler{&fakeStripeAPIWrapper{}, nil, pubKey, fr}
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/attwad/cdf/errorreport"
 	"github.com/attwad/cdf/money"
 	stripe "github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/charge"
@@ -17,17 +18,19 @@ type donateHandler struct {
 	wrapper              stripeWrapper
 	broker               money.Broker
 	stripePublishableKey string
+	reporter             errorreport.Reporter
 }
 
 const minPaymentsUsdCents = 100
 
 // NewStripeHandler handles HTTP requests for donations via Stripe.
-func NewStripeHandler(privateKey, publishableKey string, broker money.Broker) http.Handler {
+func NewStripeHandler(privateKey, publishableKey string, broker money.Broker, reporter errorreport.Reporter) http.Handler {
 	stripe.Key = privateKey
 	return &donateHandler{
 		wrapper:              &stripeAPIWrapper{},
 		broker:               broker,
 		stripePublishableKey: publishableKey,
+		reporter:             reporter,
 	}
 }
 
@@ -59,6 +62,15 @@ type postResponse struct {
 type getResponse struct {
 	OneHourAmountUsdCents int    `json:"one_hour_amount_usd_cents"`
 	StripePublishableKey  string `json:"stripe_publishable_key"`
+}
+
+// logAndReport is used when an email needs to be sent, the error logs in
+// stackdriver and a dev having a look REAL QUICK (aka. something in the
+// donation flow didn't work)
+func (h *donateHandler) logAndReport(w http.ResponseWriter, err error) {
+	log.Println(err)
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+	h.reporter.Report(err)
 }
 
 func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -102,8 +114,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	newCustomer, err := h.wrapper.NewCustomer(customerParams)
 	if err != nil {
-		log.Println("Error in new customer:", err)
-		http.Error(w, "Error in new customer", http.StatusInternalServerError)
+		h.logAndReport(w, fmt.Errorf("Error in new customer: %v", err))
 		return
 	}
 	log.Println("Customer created")
@@ -117,8 +128,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Creating charge")
 	if _, err := h.wrapper.NewCharge(chargeParams); err != nil {
-		log.Println("Error in new charge:", err)
-		http.Error(w, "Error in new charge", http.StatusInternalServerError)
+		h.logAndReport(w, fmt.Errorf("Error in new charge: %v", err))
 		return
 	}
 
@@ -126,8 +136,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Hopefully nobody is crazy enough to give me more than max_int usd cents...
 	if err := h.broker.ChangeBalance(r.Context(), int(req.AmountUsdCents)); err != nil {
-		log.Println("Could not change balance!", err)
-		http.Error(w, "Error increasing balance of account", http.StatusInternalServerError)
+		h.logAndReport(w, fmt.Errorf("Error increasing balance of account: %v", err))
 		return
 	}
 
@@ -135,8 +144,7 @@ func (h *donateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	enc := json.NewEncoder(w)
 	if err := enc.Encode(&postResponse{}); err != nil {
-		log.Println("Could not write post json output:", err)
-		http.Error(w, "Could not write post json", http.StatusInternalServerError)
+		h.logAndReport(w, fmt.Errorf("Error increasing balance of account: %v", err))
 		return
 	}
 }
