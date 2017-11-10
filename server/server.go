@@ -10,6 +10,7 @@ import (
 
 	"github.com/attwad/cdf-fe/server/handlers"
 	"github.com/attwad/cdf-fe/server/handlers/donation"
+	"github.com/attwad/cdf-fe/server/handlers/redirect"
 	"github.com/attwad/cdf-fe/server/hsts"
 	"github.com/attwad/cdf-fe/server/search"
 	"github.com/attwad/cdf/db"
@@ -71,7 +72,7 @@ func main() {
 
 	log.Println("Serving on", *hostPort)
 	srv := &http.Server{
-		Handler: gh.RecoveryHandler(gh.PrintRecoveryStack(true))(gh.CombinedLoggingHandler(os.Stderr, gh.CompressHandler(hsts.NewHandler(r)))),
+		Handler: gh.RecoveryHandler(gh.PrintRecoveryStack(true))(gh.CombinedLoggingHandler(os.Stderr, gh.CompressHandler(hsts.NewHandler(redirect.ToHTTPS(r))))),
 		Addr:    *hostPort,
 		// Good practice: enforce timeouts.
 		WriteTimeout: 15 * time.Second,
